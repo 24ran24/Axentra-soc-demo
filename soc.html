@@ -1,280 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Axentra SOC</title>
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:700,400" rel="stylesheet">
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Montserrat', Arial, sans-serif;
-            background: #121d2c;
-            color: #fff;
-        }
-        .sidebar {
-            position: fixed;
-            width: 250px;
-            height: 100vh;
-            background: #19243a;
-            box-shadow: 2px 0 10px #0006;
-            padding: 0;
-            left: 0;
-            top: 0;
-        }
-        .logo {
-            font-size: 2.7em;
-            color: #ffe500;
-            margin: 30px 0 25px 35px;
-            font-weight: 900;
-            letter-spacing: 2px;
-            line-height: 1.1;
-        }
-        .nav {
-            margin: 30px 0;
-            padding: 0;
-        }
-        .nav-item {
-            list-style: none;
-            padding: 18px 32px;
-            font-size: 1.5em;
-            color: #d8e7fa;
-            cursor: pointer;
-            transition: 0.17s background;
-        }
-        .nav-item.active, .nav-item:hover {
-            background: #232f49;
-            color: #ffe500;
-        }
-        .logout-btn {
-            position: absolute;
-            left: 30px;
-            bottom: 30px;
-            width: 180px;
-            padding: 20px 0;
-            background: #ffe500;
-            color: #232f49;
-            font-size: 1.6em;
-            border: none;
-            border-radius: 20px;
-            box-shadow: 0 0 20px #ffe50090;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.15s background;
-        }
-        .logout-btn:hover { background: #fff963; }
-
-        .main-content {
-            margin-left: 260px;
-            padding: 35px 0 0 0;
-            min-height: 100vh;
-            background: url('Axentra background.png') center/cover no-repeat;
-        }
-        .container {
-            width: 85%;
-            margin: 0 auto;
-        }
-        .box {
-            background: #202737f6;
-            border-radius: 26px;
-            margin-bottom: 30px;
-            padding: 28px 40px 36px 40px;
-            box-shadow: 0 2px 18px #0003;
-        }
-        .box h1, .box h2, .box h3 { color: #ffe500; margin-top: 0; }
-        .summary-list, .forensic-list {
-            margin: 15px 0 0 0;
-            padding: 0 0 0 20px;
-        }
-        .incident-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 18px;
-        }
-        .incident-table th, .incident-table td {
-            padding: 16px 12px;
-            text-align: left;
-        }
-        .incident-table th { color: #ffe500; font-size: 1.17em;}
-        .incident-table tr { border-bottom: 1px solid #314167; }
-        .incident-table tr:last-child { border: none;}
-        .incident-table td { color: #e3f2fd; }
-        .alert-bar {
-            background: #ffe500;
-            color: #232f49;
-            font-size: 1.22em;
-            font-weight: 700;
-            padding: 16px 42px;
-            border-radius: 15px;
-            margin-bottom: 28px;
-        }
-        .users-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-        .users-table th, .users-table td {
-            padding: 14px 10px;
-        }
-        .users-table th { color: #ffe500; font-size: 1.14em;}
-        .users-table tr { border-bottom: 1px solid #314167; }
-        .users-table td { color: #e3f2fd; }
-        /* Forensics */
-        .forensic-list { color: #f7f7f7; }
-        .forensic-list a { color: #9cf; text-decoration: underline; font-weight: 600;}
-        /* Threat Map */
-        .threat-map-legend {
-            margin-top: 20px;
-            font-size: 1.3em;
-            font-weight: 700;
-        }
-        .threat-map-legend span {
-            margin-right: 15px;
-        }
-        .legend-red { color: #ff3e3e; }
-        .legend-orange { color: orange; }
-        .legend-yellow { color: #ffe500; }
-        .legend-blue { color: #00b0ff; }
-        /* Responsive */
-        @media (max-width:900px) {
-            .main-content, .container { margin-left: 0; width: 98%; }
-            .sidebar { position: static; width: 100%; height: auto;}
-        }
-    </style>
-    <!-- Echarts 100% free -->
-    <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <meta charset="UTF-8" />
+  <title>Axentra SOC Portal</title>
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:700,900&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body { background: #121c2b; color: #ffd700; font-family: Montserrat, Arial, sans-serif; margin:0;}
+    .sidebar { width: 260px; background: #172033; height: 100vh; float: left; padding-top: 20px; position: fixed; }
+    .sidebar h1 { font-size: 2.5em; padding: 0 0 40px 24px; color: #ffd700;}
+    .sidebar .nav { width: 100%; background: none; border: none; color: #fff; font-size: 1.25em; text-align: left; padding: 18px 0 18px 24px; cursor: pointer; transition: 0.2s; outline:none; }
+    .sidebar .nav.active { background: #232d41; color: #ffd700; font-weight: bold; }
+    .sidebar .logout { background: #ffd700; color: #172033; font-size: 1.3em; font-weight: bold; border-radius: 16px; margin: 50px 24px 0 24px; box-shadow: 0 2px 16px #ffd70044; width: 85%; border:none; padding:20px;}
+    .main { margin-left: 260px; padding: 40px 50px; background: #172033; min-height: 100vh;}
+    .tab { display:none;}
+    .tab.active { display:block;}
+    .panel {background:#1a2233; border-radius:24px; padding:35px 32px; margin-bottom:32px;}
+    h2 {color:#ffd700; font-size:2.1em; margin:0 0 16px 0;}
+    h3 {color:#ffd700; font-size:1.4em;}
+    .summary li {margin-bottom:8px;}
+    .incident-table {width:100%; color:#fff; border-spacing:0;}
+    .incident-table th, .incident-table td {padding:13px 14px;}
+    .incident-table th {color:#ffd700; font-size:1.1em; border-bottom:1.5px solid #28344c;}
+    .incident-table td {border-bottom:1px solid #222e45;}
+    .status-blocked {color:#12ef62; font-weight:bold;}
+    .status-mitigated {color:#ffa500;}
+    .status-under {color:#ffd700;}
+    .users-table {width:100%; color:#fff; border-spacing:0;}
+    .users-table th, .users-table td {padding:14px 12px;}
+    .users-table th {color:#ffd700; font-size:1.1em; border-bottom:1.5px solid #28344c;}
+    .users-table td {border-bottom:1px solid #222e45;}
+    .forensics-link {color:#ffd700; font-weight:bold;}
+    .threat-legend {margin-top:24px; font-size:1.13em;}
+    .threat-legend span {margin-right:24px;}
+    .threat-legend .red {color:#ff4c4c; font-weight:bold;}
+    .threat-legend .orange {color:#ffa500; font-weight:bold;}
+    .threat-legend .yellow {color:#ffff40; font-weight:bold;}
+    @media (max-width: 900px) {
+      .main {padding:15px;}
+      .panel {padding:15px;}
+      .sidebar {width:180px;}
+      .main {margin-left:180px;}
+    }
+  </style>
 </head>
 <body>
-    <div class="sidebar">
-        <div class="logo">Axentra SOC</div>
-        <ul class="nav">
-            <li class="nav-item active" onclick="showSection('dashboard')">Dashboard</li>
-            <li class="nav-item" onclick="showSection('incidents')">Incidents</li>
-            <li class="nav-item" onclick="showSection('threatmap')">Threat Map</li>
-            <li class="nav-item" onclick="showSection('users')">Users</li>
-            <li class="nav-item" onclick="showSection('forensics')">Forensics</li>
+  <div class="sidebar">
+    <h1>Axentra SOC</h1>
+    <div id="nav-dashboard" class="nav active" onclick="showTab('dashboard')">Dashboard</div>
+    <div id="nav-incidents" class="nav" onclick="showTab('incidents')">Incidents</div>
+    <div id="nav-threatmap" class="nav" onclick="showTab('threatmap')">Threat Map</div>
+    <div id="nav-users" class="nav" onclick="showTab('users')">Users</div>
+    <div id="nav-forensics" class="nav" onclick="showTab('forensics')">Forensics</div>
+    <button class="logout" onclick="alert('Logged out!')">Logout</button>
+  </div>
+  <div class="main">
+    <!-- Dashboard -->
+    <div id="tab-dashboard" class="tab active">
+      <div class="panel">
+        <h2>Welcome to Axentra SOC</h2>
+        Real-time threat monitoring.<br>
+        <b>Active Incidents:</b> 3<br>
+        <b>Live Users:</b> 22<br>
+        <b>Last Attack:</b> 12 min ago (SQL Injection)
+      </div>
+      <div class="panel">
+        <h2>Summary</h2>
+        <ul class="summary">
+          <li>99.9% Uptime</li>
+          <li>AI-driven threat detection</li>
+          <li>Automatic response to critical events</li>
         </ul>
-        <button class="logout-btn" onclick="logout()">Logout</button>
+      </div>
     </div>
-    <div class="main-content">
-        <div class="container">
-            <!-- Dashboard -->
-            <div class="section" id="dashboard-section">
-                <div class="box">
-                    <h1>Welcome to Axentra SOC</h1>
-                    <div>Real-time threat monitoring.<br>
-                        <b>Active Incidents:</b> 3<br>
-                        <b>Live Users:</b> 22<br>
-                        <b>Last Attack:</b> 12 min ago (SQL Injection)
-                    </div>
-                </div>
-                <div class="box">
-                    <h2>Summary</h2>
-                    <ul class="summary-list">
-                        <li>99.9% Uptime</li>
-                        <li>AI-driven threat detection</li>
-                        <li>Automatic response to critical events</li>
-                    </ul>
-                </div>
-            </div>
-            <!-- Incidents -->
-            <div class="section" id="incidents-section" style="display:none;">
-                <div class="alert-bar">3 new incidents detected in the past hour!</div>
-                <div class="box">
-                    <h2>Incident Log</h2>
-                    <table class="incident-table">
-                        <tr><th>Time</th><th>Type</th><th>Status</th></tr>
-                        <tr><td>09:41</td><td>Phishing Attempt</td><td>Blocked</td></tr>
-                        <tr><td>09:17</td><td>SQL Injection</td><td>Mitigated</td></tr>
-                        <tr><td>08:55</td><td>DDoS</td><td>Under Investigation</td></tr>
-                    </table>
-                </div>
-            </div>
-            <!-- Threat Map -->
-            <div class="section" id="threatmap-section" style="display:none;">
-                <div class="box">
-                    <h2>Threat Map</h2>
-                    <div id="threat-map-chart" style="width: 620px; height: 420px; margin: 0 auto;"></div>
-                    <div class="threat-map-legend">
-                        <span class="legend-red">Red: Active attacks</span>
-                        <span class="legend-orange">Orange: Recent attempts</span>
-                        <span class="legend-yellow">Yellow: Suspicious activity</span>
-                    </div>
-                </div>
-            </div>
-            <!-- Users -->
-            <div class="section" id="users-section" style="display:none;">
-                <div class="box">
-                    <h2>Users & Roles</h2>
-                    <table class="users-table">
-                        <tr><th>User</th><th>Role</th><th>Status</th></tr>
-                        <tr><td>admin@paypal.com</td><td>Admin</td><td>Active</td></tr>
-                        <tr><td>j.doe@paypal.com</td><td>Analyst</td><td>Active</td></tr>
-                        <tr><td>s.eco@paypal.com</td><td>Read-Only</td><td>Inactive</td></tr>
-                    </table>
-                </div>
-            </div>
-            <!-- Forensics -->
-            <div class="section" id="forensics-section" style="display:none;">
-                <div class="box">
-                    <h2>Forensics</h2>
-                    <ul class="forensic-list">
-                        <li>Full packet capture available for past 72h</li>
-                        <li>Malware sandboxing (automated)</li>
-                        <li>Download last report: <a href="Axentra_Forensics_Report.pdf" download>PDF</a></li>
-                    </ul>
-                </div>
-            </div>
+    <!-- Incidents -->
+    <div id="tab-incidents" class="tab">
+      <div class="panel" style="background:#ffd700; color:#172033; font-weight:bold; font-size:1.25em;">
+        3 new incidents detected in the past hour!
+      </div>
+      <div class="panel">
+        <h2>Incident Log</h2>
+        <table class="incident-table">
+          <tr>
+            <th>Time</th><th>Type</th><th>Status</th>
+          </tr>
+          <tr>
+            <td>09:41</td><td>Phishing Attempt</td><td class="status-blocked">Blocked</td>
+          </tr>
+          <tr>
+            <td>09:17</td><td>SQL Injection</td><td class="status-mitigated">Mitigated</td>
+          </tr>
+          <tr>
+            <td>08:55</td><td>DDoS</td><td class="status-under">Under Investigation</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <!-- Threat Map -->
+    <div id="tab-threatmap" class="tab">
+      <div class="panel">
+        <h2>Threat Map</h2>
+        <div id="globe-container" style="height:400px;width:100%;max-width:600px;margin:0 auto;"></div>
+        <div class="threat-legend">
+          <span class="red">Red: Active attacks</span>
+          <span class="orange">Orange: Recent attempts</span>
+          <span class="yellow">Yellow: Suspicious activity</span>
         </div>
+      </div>
     </div>
-    <script>
-        // SPA navigation
-        function showSection(section) {
-            document.querySelectorAll('.section').forEach(el => el.style.display = 'none');
-            document.getElementById(section + '-section').style.display = '';
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            let idx = ['dashboard', 'incidents', 'threatmap', 'users', 'forensics'].indexOf(section);
-            document.querySelectorAll('.nav-item')[idx].classList.add('active');
-            // If threat map, render chart
-            if (section === 'threatmap') setTimeout(renderThreatMap, 100);
-        }
-        function logout() { alert('Logged out!'); }
-        // Threat Map with ECharts
-        function renderThreatMap() {
-            var chartDom = document.getElementById('threat-map-chart');
-            var myChart = echarts.init(chartDom);
-            var option = {
-                tooltip: {
-                    trigger: 'item',
-                    formatter: function(params) {
-                        let color = {red: 'Active attacks', orange: 'Recent attempts', yellow: 'Suspicious activity'}[params.data?.alert] || '';
-                        return `<b>${params.name}</b><br>${color}`;
-                    }
-                },
-                globe: {
-                    baseTexture: 'https://echarts.apache.org/examples/data-gl/asset/world.topo.bathy.200401.jpg',
-                    heightTexture: 'https://echarts.apache.org/examples/data-gl/asset/bathymetry_bw_composite_4k.jpg',
-                    shading: 'lambert',
-                    environment: '#121d2c',
-                    light: {ambient: {intensity: 1.3}, main: {intensity: 1.5}},
-                },
-                series: [{
-                    type: 'map3D',
-                    map: 'world',
-                    regionHeight: 3,
-                    emphasis: {itemStyle: {color: '#ffe500'}},
-                    data: [
-                        {name:'Russia', itemStyle:{color:'#ff3e3e'}, alert:'red'},
-                        {name:'China', itemStyle:{color:'#ff3e3e'}, alert:'red'},
-                        {name:'Iran', itemStyle:{color:'orange'}, alert:'orange'},
-                        {name:'United States', itemStyle:{color:'yellow'}, alert:'yellow'},
-                        {name:'Ukraine', itemStyle:{color:'#ffe500'}, alert:'yellow'}
-                    ]
-                }]
-            };
-            myChart.setOption(option);
-        }
-        // On page load, render dashboard
-        showSection('dashboard');
-    </script>
+    <!-- Users -->
+    <div id="tab-users" class="tab">
+      <div class="panel">
+        <h2>Users & Roles</h2>
+        <table class="users-table">
+          <tr><th>User</th><th>Role</th><th>Status</th></tr>
+          <tr><td>admin@paypal.com</td><td>Admin</td><td>Active</td></tr>
+          <tr><td>j.doe@paypal.com</td><td>Analyst</td><td>Active</td></tr>
+          <tr><td>s.eco@paypal.com</td><td>Read-Only</td><td>Inactive</td></tr>
+        </table>
+      </div>
+    </div>
+    <!-- Forensics -->
+    <div id="tab-forensics" class="tab">
+      <div class="panel">
+        <h2>Forensics</h2>
+        <ul>
+          <li>Full packet capture available for past 72h</li>
+          <li>Malware sandboxing (automated)</li>
+          <li>Download last report: <a href="#" onclick="downloadPDF();return false;" class="forensics-link">PDF</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <!-- JS: Tabs and Map -->
+  <script src="https://unpkg.com/echarts@5.5.0/dist/echarts.min.js"></script>
+  <script src="https://unpkg.com/echarts-gl@2.0.9/dist/echarts-gl.min.js"></script>
+  <script>
+    function showTab(tab) {
+      document.querySelectorAll('.tab').forEach(e=>e.classList.remove('active'));
+      document.querySelectorAll('.nav').forEach(e=>e.classList.remove('active'));
+      document.getElementById('tab-'+tab).classList.add('active');
+      document.getElementById('nav-'+tab).classList.add('active');
+      if(tab === 'threatmap') drawMap();
+    }
+
+    // Simple globe map using echarts (חינמי, עובד, אינטראקטיבי)
+    let mapInitialized = false;
+    function drawMap() {
+      if(mapInitialized) return;
+      mapInitialized = true;
+      const dom = document.getElementById('globe-container');
+      const myChart = echarts.init(dom);
+      myChart.setOption({
+        globe: {
+          baseTexture: 'https://echarts.apache.org/examples/data-gl/asset/earth-dark.jpg',
+          heightTexture: 'https://echarts.apache.org/examples/data-gl/asset/bathymetry_bw_composite_4k.jpg',
+          shading: 'lambert',
+          environment: '#121c2b',
+          light: { main: { intensity: 2 }, ambient: { intensity: 0.5 } },
+        },
+        series: [{
+          type: 'map3D',
+          map: 'world',
+          regionHeight: 1.5,
+          emphasis: { label: { show: true, color: '#fff', fontWeight:'bold', fontSize:16 } },
+          itemStyle: {
+            color: function(params) {
+              // דוגמאות: סימון מדינות בצבע לפי איום
+              if(params.name === 'Russia' || params.name === 'China') return '#ff4c4c';
+              if(params.name === 'United States' || params.name === 'Brazil') return '#ffa500';
+              if(params.name === 'Ukraine') return '#ffff40';
+              return '#29395c';
+            },
+            borderColor: '#333'
+          },
+          label: { show: false }
+        }]
+      });
+      myChart.on('mouseover', function (params) {
+        // Tooltip דינמי (מדינה, סוג איום)
+        if(params.name==='Russia'||params.name==='China')
+          myChart.setOption({ tooltip: { show: true, formatter: params.name+": Active attacks", backgroundColor:"#222", textStyle:{color:'#ffd700',fontWeight:'bold',fontSize:18} }});
+        else if(params.name==='United States'||params.name==='Brazil')
+          myChart.setOption({ tooltip: { show: true, formatter: params.name+": Recent attempts", backgroundColor:"#222", textStyle:{color:'#ffa500',fontWeight:'bold',fontSize:18} }});
+        else if(params.name==='Ukraine')
+          myChart.setOption({ tooltip: { show: true, formatter: params.name+": Suspicious activity", backgroundColor:"#222", textStyle:{color:'#ffff40',fontWeight:'bold',fontSize:18} }});
+        else
+          myChart.setOption({ tooltip: { show: false }});
+      });
+    }
+
+    // PDF דמו (עובד!)
+    function downloadPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(22);
+      doc.text('Forensics Report', 20, 30);
+      doc.setFontSize(15);
+      doc.text('Full packet capture available for past 72h', 20, 50);
+      doc.text('Malware sandboxing (automated)', 20, 60);
+      doc.save('forensics-report.pdf');
+    }
+  </script>
 </body>
 </html>
