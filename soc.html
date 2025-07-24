@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Axentra SOC Demo</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:700,500,400&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         body {
             margin: 0;
-            background: #13213a;
-            font-family: 'Montserrat', Arial, sans-serif;
+            min-height: 100vh;
+            background: url('Axentra background.png') center center / cover no-repeat fixed !important;
+            font-family: 'IBM Plex Sans', Arial, sans-serif;
             color: #fff;
             font-size: 18px;
         }
@@ -19,13 +20,14 @@
             min-height: 100vh;
         }
         .sidebar {
-            background: #1a2637;
+            background: #1a2637cc;
             width: 260px;
             padding: 0;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
             align-items: stretch;
+            backdrop-filter: blur(2.5px);
         }
         .sidebar-header {
             color: #FFD700;
@@ -35,6 +37,8 @@
             line-height: 1.1em;
             letter-spacing: 1px;
             margin-bottom: 20px;
+            font-family: inherit;
+            text-shadow: 0 2px 15px #0006;
         }
         .nav {
             flex: 1;
@@ -50,24 +54,28 @@
             cursor: pointer;
             transition: background .17s;
             outline: none;
+            font-family: inherit;
+            letter-spacing: 0.01em;
         }
         .nav button.active, .nav button:hover {
-            background: #232c3d;
+            background: #232c3dbb;
             color: #FFD700;
             font-weight: bold;
         }
         .logout-btn {
             margin: 35px 22px 30px 22px;
-            background: #FFD700;
-            color: #1a2637;
+            background: linear-gradient(90deg,#ffe253 75%,#FFD600 100%);
+            color: #233860;
             border: none;
-            font-size: 1.2em;
+            font-size: 1.14em;
             border-radius: 15px;
-            padding: 16px 0;
+            padding: 15px 0;
             cursor: pointer;
             font-weight: bold;
             box-shadow: 0 0 18px #FFD70033;
             transition: background .18s;
+            font-family: inherit;
+            letter-spacing: 0.03em;
         }
         .logout-btn:hover { background: #ffe249; }
         .main {
@@ -80,11 +88,12 @@
             min-height: 600px;
         }
         .box {
-            background: #232c3d;
+            background: #232c3de6;
             border-radius: 32px;
             padding: 36px 48px 30px 48px;
             margin-bottom: 28px;
             box-shadow: 0 0 24px #0001;
+            font-family: inherit;
         }
         h2 {
             color: #FFD700;
@@ -92,6 +101,7 @@
             margin-top: 0;
             margin-bottom: 18px;
             font-weight: 700;
+            font-family: inherit;
         }
         .legend {
             margin-top: 24px;
@@ -100,6 +110,7 @@
             display: flex;
             gap: 28px;
             font-weight: bold;
+            font-family: inherit;
         }
         .legend span { font-weight: bold; }
         .red { color: #FF5454; }
@@ -108,28 +119,38 @@
         .blue { color: #53e4ff; }
         /* PDF Button */
         .pdf-btn {
-            background: none;
-            border: 1.5px solid #FFD700;
-            color: #FFD700;
-            border-radius: 7px;
-            padding: 6px 18px;
-            font-size: 1em;
+            background: linear-gradient(90deg,#ffe253 75%,#FFD600 100%);
+            border: none;
+            color: #233860;
+            border-radius: 12px;
+            padding: 10px 22px;
+            font-size: 1.09em;
             cursor: pointer;
-            float: right;
-            margin-top: -30px;
-            margin-bottom: 14px;
+            box-shadow: 0 3px 18px #ffd70033;
+            margin-top: -20px;
+            margin-bottom: 16px;
             margin-right: 0;
             transition: background .14s;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-family: inherit;
         }
-        .pdf-btn:hover { background: #ffd70022; color: #fff; }
+        .pdf-btn:hover {
+            background: linear-gradient(90deg, #ffe983 70%, #ffeb3b 100%);
+            color: #222b46;
+        }
         /* Login */
         #login-section {
-            background: #1a2637;
+            background: #1a2637cc;
             border-radius: 22px;
             max-width: 360px;
             margin: 120px auto 0 auto;
             padding: 38px 36px 38px 36px;
             box-shadow: 0 0 40px #0006;
+            font-family: inherit;
+            backdrop-filter: blur(2px);
         }
         #login-section h2 {
             color: #FFD700;
@@ -144,17 +165,19 @@
             border-radius: 7px;
             border: none;
             outline: none;
+            font-family: inherit;
         }
         #login-section button {
             width: 100%;
             padding: 12px;
             background: #FFD700;
             color: #1a2637;
-            font-size: 1.05em;
+            font-size: 1.08em;
             border-radius: 8px;
             border: none;
             font-weight: bold;
             cursor: pointer;
+            font-family: inherit;
         }
         @media (max-width: 1100px) {
             .content { padding: 0 10px; }
@@ -204,7 +227,7 @@
             </div>
             <!-- Incidents -->
             <div id="incidents-section" class="box" style="display:none;">
-                <button class="pdf-btn" onclick="exportPDF()">Export PDF</button>
+                <button class="pdf-btn" onclick="exportPDF()">📄 Export PDF</button>
                 <div style="background:#FFD700;color:#1a2637;font-weight:bold;border-radius:10px;padding:10px 14px 10px 18px;margin-bottom:17px;">
                     3 new incidents detected in the past hour!
                 </div>
@@ -223,7 +246,7 @@
             <!-- Threat Map -->
             <div id="threatmap-section" class="box" style="display:none;">
                 <h2>Threat Map</h2>
-                <div id="mainMap" style="width: 570px; height: 380px; margin:auto; background:#151e2a;border-radius:18px;box-shadow:0 0 22px #0019;"></div>
+                <div id="mainMap" style="width: 570px; height: 380px; margin:auto; background:#151e2ab7;border-radius:18px;box-shadow:0 0 22px #0019;"></div>
                 <div class="legend" style="margin-top:22px;">
                     <span class="red">Red: Active attacks</span>
                     <span class="orange">Orange: Recent attempts</span>
@@ -264,8 +287,7 @@
         showSection('dashboard');
     }
     function logout() {
-        document.getElementById('main-container').style.display = 'none';
-        document.getElementById('login-section').style.display = 'block';
+        window.location.href = "index.html";
     }
     // --- NAVIGATION
     function showSection(section) {
@@ -302,8 +324,8 @@
             geo: {
                 map: 'world',
                 roam: true,
-                itemStyle: { areaColor: '#223042', borderColor: '#444' },
-                emphasis: { itemStyle: { areaColor: '#555' } }
+                itemStyle: { areaColor: '#252f44', borderColor: '#444' },
+                emphasis: { itemStyle: { areaColor: '#FFD70033' } }
             },
             series: [{
                 type: 'map',
@@ -320,25 +342,19 @@
                     {name: "Brazil", value: 2}
                 ],
                 itemStyle: {
-                    areaColor: '#232c3d'
+                    areaColor: function(params) {
+                        // מדינות בעייתיות - צבעוניות, כל השאר כהה
+                        const v = params.data ? params.data.value : 0;
+                        if (v === 3) return '#FF5454';
+                        if (v === 2) return '#FFAF27';
+                        if (v === 1) return '#ffef49';
+                        return '#232c3d';
+                    }
                 },
                 emphasis: {
                     label: { color: '#FFD700', fontWeight:'bold' }
                 }
             }]
-        };
-        var mapColors = {
-            3: '#FF5454',    // Red: Active
-            2: '#FFAF27',    // Orange: Recent
-            1: '#ffef49'     // Yellow: Suspicious
-        };
-        option.visualMap = {
-            show: false,
-            pieces: [
-                {value: 3, color: mapColors[3]},
-                {value: 2, color: mapColors[2]},
-                {value: 1, color: mapColors[1]}
-            ]
         };
         window.myMapChart.setOption(option);
     }
@@ -350,15 +366,17 @@
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
         doc.setFont("helvetica", "bold");
-        doc.setFontSize(18);
-        doc.text("Axentra SOC - Incident Report", 12, 16);
+        doc.setFontSize(20);
+        doc.setTextColor(30,30,50);
+        doc.text("Axentra SOC – Incident Report", 14, 16);
         doc.setFontSize(13);
         doc.setFont("helvetica", "normal");
-        doc.text("Time         Type                 Status", 12, 32);
+        doc.text("Time        Type                Status", 14, 32);
         doc.setFont("courier", "normal");
-        doc.text("09:41    Phishing Attempt   Blocked", 12, 42);
-        doc.text("09:17    SQL Injection      Mitigated", 12, 50);
-        doc.text("08:55    DDoS               Under Investigation", 12, 58);
+        doc.setTextColor(60,60,60);
+        doc.text("09:41    Phishing Attempt   Blocked", 14, 42);
+        doc.text("09:17    SQL Injection      Mitigated", 14, 50);
+        doc.text("08:55    DDoS               Under Investigation", 14, 58);
         doc.save("incident-report.pdf");
     }
 </script>
