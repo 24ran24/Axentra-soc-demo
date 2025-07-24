@@ -2,315 +2,365 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Axentra SOC</title>
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:700,400" rel="stylesheet">
+    <title>Axentra SOC Demo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         body {
             margin: 0;
-            background: #101b2a;
+            background: #13213a;
             font-family: 'Montserrat', Arial, sans-serif;
             color: #fff;
+            font-size: 18px;
         }
         .container {
             display: flex;
-            height: 100vh;
+            min-height: 100vh;
         }
         .sidebar {
-            background: #19233a;
-            min-width: 240px;
-            max-width: 260px;
-            padding: 0 0 0 0;
+            background: #1a2637;
+            width: 260px;
+            padding: 0;
+            box-sizing: border-box;
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
+            align-items: stretch;
         }
-        .sidebar h1 {
-            font-size: 2.5rem;
-            margin: 36px 0 0 32px;
-            color: #ffe120;
-            line-height: 1.1;
+        .sidebar-header {
+            color: #FFD700;
+            font-size: 2.3em;
+            font-weight: bold;
+            padding: 32px 20px 0 20px;
+            line-height: 1.1em;
             letter-spacing: 1px;
+            margin-bottom: 20px;
         }
-        .sidebar nav {
-            margin-top: 30px;
-            width: 100%;
+        .nav {
+            flex: 1;
         }
-        .sidebar nav button {
+        .nav button {
             width: 100%;
-            padding: 18px 30px;
+            padding: 18px 28px;
             background: none;
             border: none;
-            outline: none;
-            text-align: left;
             color: #fff;
-            font-size: 1.18rem;
-            font-family: inherit;
-            font-weight: 500;
+            font-size: 1.15em;
+            text-align: left;
             cursor: pointer;
-            transition: background 0.14s;
-            letter-spacing: 0.5px;
+            transition: background .17s;
+            outline: none;
         }
-        .sidebar nav button.active, .sidebar nav button:hover {
-            background: #212c41;
-            color: #ffe120;
+        .nav button.active, .nav button:hover {
+            background: #232c3d;
+            color: #FFD700;
+            font-weight: bold;
         }
         .logout-btn {
-            background: #ffe120;
+            margin: 35px 22px 30px 22px;
+            background: #FFD700;
+            color: #1a2637;
             border: none;
-            font-family: inherit;
-            font-weight: bold;
-            font-size: 1.15rem;
-            color: #111;
-            width: 180px;
+            font-size: 1.2em;
+            border-radius: 15px;
             padding: 16px 0;
-            border-radius: 20px;
-            margin: auto 0 34px 30px;
             cursor: pointer;
-            box-shadow: 0 3px 18px #ffe12047;
-            transition: background .2s, box-shadow .2s;
-        }
-        .logout-btn:hover {
-            background: #fff350;
-            box-shadow: 0 5px 20px #ffe1207b;
-        }
-        .main-content {
-            flex: 1;
-            background: url('https://i.imgur.com/qpuk3nD.jpg') repeat;
-            min-width: 0;
-            padding: 0;
-        }
-        .main-panel {
-            margin: 42px 56px;
-            padding: 18px 32px 30px 32px;
-            background: #232b39ec;
-            border-radius: 35px;
-            box-shadow: 0 0 42px #0004;
-        }
-        .title {
-            font-size: 2.1rem;
-            color: #ffe120;
-            margin: 8px 0 24px 0;
-            font-weight: 700;
-        }
-        .section {
-            margin-bottom: 32px;
-        }
-        .summary-list, .users-table {
-            margin: 18px 0 0 0;
-            font-size: 1.09rem;
-            color: #ffe120;
-        }
-        .summary-list li {
-            margin-bottom: 7px;
-            color: #fff;
-        }
-        .incident-table, .users-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 16px;
-            background: none;
-        }
-        .incident-table th, .incident-table td,
-        .users-table th, .users-table td {
-            padding: 10px 12px;
-            font-size: 1.05rem;
-            text-align: left;
-        }
-        .incident-table th, .users-table th {
-            color: #ffe120;
-            font-weight: 700;
-            border-bottom: 2px solid #334;
-        }
-        .incident-table td, .users-table td {
-            color: #fff;
-            border-bottom: 1px solid #223044;
-        }
-        .incident-alert {
-            background: #ffe120;
-            color: #232b39;
             font-weight: bold;
-            padding: 14px 18px;
-            border-radius: 18px;
+            box-shadow: 0 0 18px #FFD70033;
+            transition: background .18s;
+        }
+        .logout-btn:hover { background: #ffe249; }
+        .main {
+            flex: 1;
+            padding: 38px 0 0 0;
+        }
+        .content {
+            max-width: 1380px;
+            margin: 0 auto;
+            min-height: 600px;
+        }
+        .box {
+            background: #232c3d;
+            border-radius: 32px;
+            padding: 36px 48px 30px 48px;
+            margin-bottom: 28px;
+            box-shadow: 0 0 24px #0001;
+        }
+        h2 {
+            color: #FFD700;
+            font-size: 2em;
+            margin-top: 0;
+            margin-bottom: 18px;
+            font-weight: 700;
+        }
+        .legend {
+            margin-top: 24px;
+            font-size: 1.1em;
+            color: #FFD700;
+            display: flex;
+            gap: 28px;
+            font-weight: bold;
+        }
+        .legend span { font-weight: bold; }
+        .red { color: #FF5454; }
+        .orange { color: #FFAF27; }
+        .yellow { color: #ffef49; }
+        .blue { color: #53e4ff; }
+        /* PDF Button */
+        .pdf-btn {
+            background: none;
+            border: 1.5px solid #FFD700;
+            color: #FFD700;
+            border-radius: 7px;
+            padding: 6px 18px;
+            font-size: 1em;
+            cursor: pointer;
+            float: right;
+            margin-top: -30px;
+            margin-bottom: 14px;
+            margin-right: 0;
+            transition: background .14s;
+        }
+        .pdf-btn:hover { background: #ffd70022; color: #fff; }
+        /* Login */
+        #login-section {
+            background: #1a2637;
+            border-radius: 22px;
+            max-width: 360px;
+            margin: 120px auto 0 auto;
+            padding: 38px 36px 38px 36px;
+            box-shadow: 0 0 40px #0006;
+        }
+        #login-section h2 {
+            color: #FFD700;
             margin-bottom: 24px;
-            font-size: 1.14rem;
+            text-align: center;
         }
-        .map-legend {
-            margin-top: 22px;
-            font-size: 1.09rem;
+        #login-section input {
+            width: 100%;
+            padding: 12px 14px;
+            margin: 10px 0 24px 0;
+            font-size: 1em;
+            border-radius: 7px;
+            border: none;
+            outline: none;
         }
-        .map-legend b { font-weight: bold; }
-        .map-legend .red { color: #ff4b5c; font-weight: bold;}
-        .map-legend .orange { color: #ffad1f; font-weight: bold;}
-        .map-legend .yellow { color: #ffe120; font-weight: bold;}
-        .map-legend .blue { color: #36adff; font-weight: bold;}
-        .download-link {
-            color: #a1e;
-            font-weight: 500;
+        #login-section button {
+            width: 100%;
+            padding: 12px;
+            background: #FFD700;
+            color: #1a2637;
+            font-size: 1.05em;
+            border-radius: 8px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
         }
         @media (max-width: 1100px) {
-            .main-panel { margin: 14px 5vw; }
-        }
-        @media (max-width: 650px) {
-            .sidebar { min-width: 115px; max-width: 145px;}
-            .sidebar h1 { font-size: 1.25rem; margin-left: 8px;}
-            .logout-btn { font-size: .96rem; width: 90px; margin-left: 7px;}
+            .content { padding: 0 10px; }
+            .box { padding: 20px 10px 18px 10px; }
         }
     </style>
-    <!-- Globe.gl - Threat Map Library -->
-    <script src="https://unpkg.com/globe.gl"></script>
 </head>
 <body>
-<div class="container">
+<div id="login-section">
+    <h2>Axentra SOC Portal</h2>
+    <input id="user" type="text" placeholder="Username" autocomplete="off">
+    <input id="pass" type="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+</div>
+<div class="container" style="display:none;" id="main-container">
     <div class="sidebar">
-        <h1>Axentra<br>SOC</h1>
-        <nav>
-            <button id="tab-dashboard" class="active" onclick="showTab('dashboard')">Dashboard</button>
-            <button id="tab-incidents" onclick="showTab('incidents')">Incidents</button>
-            <button id="tab-threatmap" onclick="showTab('threatmap')">Threat Map</button>
-            <button id="tab-users" onclick="showTab('users')">Users</button>
-            <button id="tab-forensics" onclick="showTab('forensics')">Forensics</button>
-        </nav>
-        <button class="logout-btn" onclick="logout()">Logout</button>
+        <div class="sidebar-header">Axentra<br>SOC</div>
+        <div class="nav">
+            <button id="nav-dashboard" onclick="showSection('dashboard')" class="active">Dashboard</button>
+            <button id="nav-incidents" onclick="showSection('incidents')">Incidents</button>
+            <button id="nav-threatmap" onclick="showSection('threatmap')">Threat Map</button>
+            <button id="nav-users" onclick="showSection('users')">Users</button>
+            <button id="nav-forensics" onclick="showSection('forensics')">Forensics</button>
+        </div>
+        <button class="logout-btn" onclick="logout()" id="logoutBtn">Logout</button>
     </div>
-    <div class="main-content">
-        <div class="main-panel" id="main-panel">
-            <!-- Dynamic Content Here -->
+    <div class="main">
+        <div class="content">
+            <!-- Dashboard -->
+            <div id="dashboard-section" class="box" style="display:block;">
+                <h2>Welcome to Axentra SOC</h2>
+                <div>Real-time threat monitoring.</div>
+                <div style="margin:18px 0 10px 0;">
+                    <span style="color:#FFD700;font-weight:bold;">Active Incidents:</span> 3<br>
+                    <span style="color:#FFD700;font-weight:bold;">Live Users:</span> 22<br>
+                    <span style="color:#FFD700;font-weight:bold;">Last Attack:</span> 12 min ago (SQL Injection)
+                </div>
+                <hr style="margin:16px 0 22px 0;opacity:.12;">
+                <div>
+                    <h2 style="margin-top:0;font-size:1.2em;">Summary</h2>
+                    <ul>
+                        <li>99.9% Uptime</li>
+                        <li>AI-driven threat detection</li>
+                        <li>Automatic response to critical events</li>
+                    </ul>
+                </div>
+            </div>
+            <!-- Incidents -->
+            <div id="incidents-section" class="box" style="display:none;">
+                <button class="pdf-btn" onclick="exportPDF()">Export PDF</button>
+                <div style="background:#FFD700;color:#1a2637;font-weight:bold;border-radius:10px;padding:10px 14px 10px 18px;margin-bottom:17px;">
+                    3 new incidents detected in the past hour!
+                </div>
+                <h2>Incident Log</h2>
+                <table style="width:100%;border-collapse:collapse;font-size:1em;">
+                    <tr style="background:#232c3d;color:#FFD700;">
+                        <th align="left">Time</th>
+                        <th align="left">Type</th>
+                        <th align="left">Status</th>
+                    </tr>
+                    <tr><td>09:41</td><td>Phishing Attempt</td><td>Blocked</td></tr>
+                    <tr><td>09:17</td><td>SQL Injection</td><td>Mitigated</td></tr>
+                    <tr><td>08:55</td><td>DDoS</td><td>Under Investigation</td></tr>
+                </table>
+            </div>
+            <!-- Threat Map -->
+            <div id="threatmap-section" class="box" style="display:none;">
+                <h2>Threat Map</h2>
+                <div id="mainMap" style="width: 570px; height: 380px; margin:auto; background:#151e2a;border-radius:18px;box-shadow:0 0 22px #0019;"></div>
+                <div class="legend" style="margin-top:22px;">
+                    <span class="red">Red: Active attacks</span>
+                    <span class="orange">Orange: Recent attempts</span>
+                    <span class="yellow">Yellow: Suspicious activity</span>
+                </div>
+            </div>
+            <!-- Users -->
+            <div id="users-section" class="box" style="display:none;">
+                <h2>Users & Roles</h2>
+                <table style="width:100%;border-collapse:collapse;font-size:1em;">
+                    <tr style="background:#232c3d;color:#FFD700;">
+                        <th align="left">User</th>
+                        <th align="left">Role</th>
+                        <th align="left">Status</th>
+                    </tr>
+                    <tr><td>admin@paypal.com</td><td>Admin</td><td>Active</td></tr>
+                    <tr><td>j.doe@paypal.com</td><td>Analyst</td><td>Active</td></tr>
+                    <tr><td>s.eco@paypal.com</td><td>Read-Only</td><td>Inactive</td></tr>
+                </table>
+            </div>
+            <!-- Forensics -->
+            <div id="forensics-section" class="box" style="display:none;">
+                <h2>Forensics</h2>
+                <ul>
+                    <li>Full packet capture available for past 72h</li>
+                    <li>Malware sandboxing (automated)</li>
+                    <li>Download last report: <a href="https://www.orimi.com/pdf-test.pdf" target="_blank" style="color:#c7c7ff;">PDF</a></li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
 <script>
-const content = {
-    dashboard: `
-    <div class="section">
-      <div class="title">Welcome to Axentra SOC</div>
-      <div>Real-time threat monitoring.<br>
-        <b>Active Incidents:</b> 3<br>
-        <b>Live Users:</b> 22<br>
-        <b>Last Attack:</b> 12 min ago (SQL Injection)
-      </div>
-    </div>
-    <div class="section">
-      <div class="title">Summary</div>
-      <ul class="summary-list">
-        <li>99.9% Uptime</li>
-        <li>AI-driven threat detection</li>
-        <li>Automatic response to critical events</li>
-      </ul>
-    </div>`,
-    incidents: `
-    <div class="incident-alert">3 new incidents detected in the past hour!</div>
-    <div class="title">Incident Log</div>
-    <table class="incident-table">
-      <tr><th>Time</th><th>Type</th><th>Status</th></tr>
-      <tr><td>09:41</td><td>Phishing Attempt</td><td>Blocked</td></tr>
-      <tr><td>09:17</td><td>SQL Injection</td><td>Mitigated</td></tr>
-      <tr><td>08:55</td><td>DDoS</td><td>Under Investigation</td></tr>
-    </table>`,
-    threatmap: `
-    <div class="title">Threat Map</div>
-    <div id="globeViz" style="width:100%; height:400px; margin: 0 auto 8px auto;"></div>
-    <div class="map-legend">
-        <span class="red">Red:</span> Active attacks
-        <span class="orange" style="margin-left:22px;">Orange:</span> Recent attempts
-        <span class="yellow" style="margin-left:22px;">Yellow:</span> Suspicious activity
-    </div>`,
-    users: `
-    <div class="title">Users & Roles</div>
-    <table class="users-table">
-      <tr><th>User</th><th>Role</th><th>Status</th></tr>
-      <tr><td>admin@paypal.com</td><td>Admin</td><td>Active</td></tr>
-      <tr><td>j.doe@paypal.com</td><td>Analyst</td><td>Active</td></tr>
-      <tr><td>s.eco@paypal.com</td><td>Read-Only</td><td>Inactive</td></tr>
-    </table>`,
-    forensics: `
-    <div class="title">Forensics</div>
-    <ul class="summary-list">
-      <li>Full packet capture available for past 72h</li>
-      <li>Malware sandboxing (automated)</li>
-      <li>Download last report: <a href="#" class="download-link" onclick="downloadPDF(event)">PDF</a></li>
-    </ul>`
-};
+    // --- LOGIN LOGOUT
+    function login() {
+        document.getElementById('login-section').style.display = 'none';
+        document.getElementById('main-container').style.display = 'flex';
+        showSection('dashboard');
+    }
+    function logout() {
+        document.getElementById('main-container').style.display = 'none';
+        document.getElementById('login-section').style.display = 'block';
+    }
+    // --- NAVIGATION
+    function showSection(section) {
+        // Hide all sections
+        ['dashboard', 'incidents', 'threatmap', 'users', 'forensics'].forEach(s => {
+            document.getElementById(s+'-section').style.display = 'none';
+            document.getElementById('nav-'+s).classList.remove('active');
+        });
+        // Show selected section
+        document.getElementById(section+'-section').style.display = 'block';
+        document.getElementById('nav-'+section).classList.add('active');
+        // If threatmap, refresh map (for resizing bug)
+        if(section === 'threatmap' && window.myMapChart) {
+            setTimeout(() => { window.myMapChart.resize(); }, 200);
+        }
+    }
+    // --- THREAT MAP (ECharts, חינם!)
+    function loadMap() {
+        var chartDom = document.getElementById('mainMap');
+        window.myMapChart = echarts.init(chartDom);
+        var option = {
+            tooltip: {
+                trigger: 'item',
+                formatter: function(params) {
+                    if (params.value === 3)
+                        return '<b>' + params.name + "</b><br><span style='color:#FF5454'>Active attacks</span>";
+                    if (params.value === 2)
+                        return '<b>' + params.name + "</b><br><span style='color:#FFAF27'>Recent attempts</span>";
+                    if (params.value === 1)
+                        return '<b>' + params.name + "</b><br><span style='color:#ffef49'>Suspicious activity</span>";
+                    return params.name + "<br>No threats detected";
+                }
+            },
+            geo: {
+                map: 'world',
+                roam: true,
+                itemStyle: { areaColor: '#223042', borderColor: '#444' },
+                emphasis: { itemStyle: { areaColor: '#555' } }
+            },
+            series: [{
+                type: 'map',
+                map: 'world',
+                roam: true,
+                geoIndex: 0,
+                data: [
+                    {name: "Russia", value: 3},
+                    {name: "China", value: 3},
+                    {name: "United States", value: 2},
+                    {name: "Ukraine", value: 1},
+                    {name: "India", value: 2},
+                    {name: "Israel", value: 1},
+                    {name: "Brazil", value: 2}
+                ],
+                itemStyle: {
+                    areaColor: '#232c3d'
+                },
+                emphasis: {
+                    label: { color: '#FFD700', fontWeight:'bold' }
+                }
+            }]
+        };
+        var mapColors = {
+            3: '#FF5454',    // Red: Active
+            2: '#FFAF27',    // Orange: Recent
+            1: '#ffef49'     // Yellow: Suspicious
+        };
+        option.visualMap = {
+            show: false,
+            pieces: [
+                {value: 3, color: mapColors[3]},
+                {value: 2, color: mapColors[2]},
+                {value: 1, color: mapColors[1]}
+            ]
+        };
+        window.myMapChart.setOption(option);
+    }
+    // load map on page load
+    setTimeout(loadMap, 500);
 
-function showTab(tab) {
-    // Highlight tab
-    document.querySelectorAll('.sidebar nav button').forEach(b=>b.classList.remove('active'));
-    document.getElementById('tab-'+tab).classList.add('active');
-    // Render content
-    document.getElementById('main-panel').innerHTML = content[tab];
-    if(tab === 'threatmap') loadGlobe();
-}
-function logout() {
-    alert("You have been logged out.");
-}
-function downloadPDF(e){
-    e.preventDefault();
-    // Fake PDF (download as blob)
-    const pdfContent = 'Axentra SOC - Forensics Report\n\nStatus: Clean\nDate: ' + (new Date()).toLocaleString();
-    const blob = new Blob([pdfContent], {type: 'application/pdf'});
-    const link = document.createElement('a');
-    link.href = window.URL.createObjectURL(blob);
-    link.download = 'forensics_report.pdf';
-    link.click();
-}
-
-// Render first tab
-showTab('dashboard');
-
-function loadGlobe() {
-    // Remove old globe
-    document.getElementById('globeViz').innerHTML = '';
-    const g = Globe()
-        .globeImageUrl('//unpkg.com/three-globe/example/img/earth-dark.jpg')
-        .backgroundColor('rgba(0,0,0,0)')
-        .showAtmosphere(true)
-        .atmosphereColor('#ffe120')
-        .atmosphereAltitude(0.18)
-        .width(document.getElementById('globeViz').offsetWidth)
-        .height(400)
-        (document.getElementById('globeViz'));
-
-    // Countries by ISO (dummy data)
-    const data = [
-        { country: "China", code: "CHN", status: "Active attacks", color: "#ff4b5c" },
-        { country: "Russia", code: "RUS", status: "Active attacks", color: "#ff4b5c" },
-        { country: "Ukraine", code: "UKR", status: "Suspicious activity", color: "#ffe120" },
-        { country: "US", code: "USA", status: "Recent attempts", color: "#ffad1f" },
-        { country: "Brazil", code: "BRA", status: "Recent attempts", color: "#ffad1f" }
-    ];
-
-    fetch('https://unpkg.com/world-atlas/countries-110m.json').then(res=>res.json()).then(countries=>{
-        const countriesData = window.topojson.feature(countries, countries.objects.countries).features;
-        g.polygonsData(countriesData)
-            .polygonAltitude(0.09)
-            .polygonCapColor(d => {
-                const found = data.find(x => x.code === d.id || x.code === d.properties.iso_a3);
-                return found ? found.color : "rgba(120,180,220,0.09)";
-            })
-            .polygonSideColor(()=>"#111a")
-            .polygonStrokeColor(()=>"#222a")
-            .onPolygonHover(hoverD => g
-                .polygonAltitude(d => d === hoverD ? 0.15 : 0.09)
-            )
-            .polygonsTransitionDuration(300)
-            .onPolygonClick(d=>{
-                const found = data.find(x => x.code === d.id || x.code === d.properties.iso_a3);
-                if(found) alert(found.country+": "+found.status);
-            })
-            .polygonLabel(d=>{
-                const found = data.find(x => x.code === d.id || x.code === d.properties.iso_a3);
-                return found
-                    ? `<div style="font-weight:bold;font-size:1.2em;color:${found.color};">${found.country}</div>
-                       <div>${found.status}</div>`
-                    : `<div style="font-weight:bold;">${d.properties.name}</div>`;
-            });
-    });
-}
-// Load topojson (required for Globe)
-(function(){
-    var s=document.createElement("script");
-    s.src="https://unpkg.com/topojson@3";
-    document.head.appendChild(s);
-})();
+    // --- PDF EXPORT (jsPDF)
+    function exportPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(18);
+        doc.text("Axentra SOC - Incident Report", 12, 16);
+        doc.setFontSize(13);
+        doc.setFont("helvetica", "normal");
+        doc.text("Time         Type                 Status", 12, 32);
+        doc.setFont("courier", "normal");
+        doc.text("09:41    Phishing Attempt   Blocked", 12, 42);
+        doc.text("09:17    SQL Injection      Mitigated", 12, 50);
+        doc.text("08:55    DDoS               Under Investigation", 12, 58);
+        doc.save("incident-report.pdf");
+    }
 </script>
 </body>
 </html>
