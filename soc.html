@@ -1,276 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Axentra SOC – Demo 2025</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:700,500,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-  <style>
-    body {
-      background: #13203a url('Axentra background.png') center center/cover no-repeat fixed;
-      margin: 0;
-      min-height: 100vh;
-      font-family: 'IBM Plex Sans', Arial, sans-serif;
-    }
-    .sidebar {
-      background: #16203a;
-      color: #FFD600;
-      width: 260px;
-      height: 100vh;
-      position: fixed;
-      left: 0; top: 0;
-      z-index: 99;
-      box-shadow: 2px 0 25px #000a;
-      display: flex;
-      flex-direction: column;
-    }
-    .sidebar h1 {
-      margin: 30px 0 40px 24px;
-      font-size: 39px;
-      letter-spacing: 1px;
-      font-weight: 700;
-      color: #FFD600;
-    }
-    .menu {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      margin-left: 0;
-      margin-right: 0;
-    }
-    .menu-btn {
-      font-size: 23px;
-      color: #fff;
-      background: none;
-      border: none;
-      padding: 20px 32px 20px 35px;
-      text-align: left;
-      cursor: pointer;
-      width: 100%;
-      transition: background 0.14s, color 0.14s;
-      outline: none;
-    }
-    .menu-btn.active, .menu-btn:hover {
-      background: #212e4a;
-      color: #FFD600;
-      font-weight: bold;
-    }
-    .logout-btn {
-      background: #FFD600;
-      color: #16203a;
-      font-size: 24px;
-      font-weight: bold;
-      border: none;
-      border-radius: 14px;
-      margin: 28px auto 38px auto;
-      padding: 14px 32px;
-      cursor: pointer;
-      box-shadow: 0 2px 24px #0005, 0 1px 0 #FFD60066;
-      display: block;
-      width: 82%;
-      transition: box-shadow 0.18s, background 0.16s;
-    }
-    .logout-btn:hover {
-      background: #fff44c;
-      box-shadow: 0 5px 36px #FFD60077;
-    }
-
-    .main-content {
-      margin-left: 260px;
-      padding: 46px 2vw 20px 2vw;
-      min-height: 100vh;
-      background: #192235cc;
-      color: #e9e9e9;
-    }
-    .section-box {
-      background: #232b3e;
-      border-radius: 22px;
-      padding: 35px 38px 30px 38px;
-      margin-bottom: 30px;
-      min-width: 340px;
-      max-width: 1500px;
-      box-shadow: 0 4px 22px #0002;
-    }
-    .section-title {
-      font-size: 33px;
-      font-weight: 700;
-      color: #FFD600;
-      margin-bottom: 12px;
-      margin-top: 0;
-      letter-spacing: 1px;
-    }
-    /* Threat Map Styles */
-    .map-container {
-      width: 520px;
-      height: 370px;
-      margin: 20px auto 0 auto;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 2px 25px #0a174055;
-      background: #181e2d;
-    }
-    #threatmap { width: 100%; height: 100%; }
-    .legend {
-      margin-top: 20px;
-      margin-left: 18px;
-      font-size: 18px;
-      color: #fff;
-    }
-    .legend span {
-      font-weight: bold;
-      padding-right: 7px;
-    }
-    /* Tables, lists, etc. */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: none;
-      color: #fff;
-    }
-    th, td {
-      padding: 13px 9px;
-      text-align: left;
-      font-size: 18px;
-    }
-    th { color: #FFD600; border-bottom: 2px solid #FFD60055;}
-    tr:nth-child(even) { background: #222a3c44;}
-    /* Responsive */
-    @media (max-width: 1000px) {
-      .main-content { padding: 30px 2vw; }
-      .map-container { width: 99vw; height: 44vw; min-width: 210px; min-height: 200px;}
-    }
-    @media (max-width: 700px) {
-      .sidebar { width: 98vw; height: auto; position:static; box-shadow:none; flex-direction:row; }
-      .main-content { margin-left: 0; }
-      .section-box { padding: 12px 3vw;}
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Axentra SOC - Threat Map</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Globe.gl + dependencies -->
+    <script src="https://unpkg.com/three@0.152.2/build/three.min.js"></script>
+    <script src="https://unpkg.com/globe.gl"></script>
+    <style>
+        body {
+            margin: 0;
+            background: #101c2a;
+            font-family: 'IBM Plex Sans', Arial, sans-serif;
+        }
+        .threat-map-container {
+            background: #232c3c;
+            border-radius: 28px;
+            box-shadow: 0 2px 36px 0 #08121d90;
+            max-width: 900px;
+            width: 98%;
+            margin: 48px auto 0 auto;
+            padding: 32px 30px 20px 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h2 {
+            color: #ffd600;
+            font-size: 34px;
+            margin-bottom: 20px;
+        }
+        #globeViz {
+            width: 540px;
+            height: 540px;
+            margin-bottom: 18px;
+        }
+        .threat-legend {
+            color: #fff;
+            font-size: 17px;
+            margin-top: 14px;
+            margin-bottom: 5px;
+            text-align: left;
+            width: 100%;
+        }
+        .threat-legend span {
+            font-weight: bold;
+        }
+        .threat-legend .red { color: #FF4444; }
+        .threat-legend .orange { color: #FFA500; }
+        .threat-legend .yellow { color: #FFF700; }
+        @media (max-width: 650px) {
+            #globeViz { width: 98vw; height: 52vw; min-height: 320px;}
+        }
+        /* Tooltip styles */
+        .country-tooltip {
+            position: fixed;
+            z-index: 9999;
+            background: #232c3cf9;
+            color: #ffd600;
+            border-radius: 9px;
+            padding: 7px 16px 6px 12px;
+            box-shadow: 0 2px 12px #0005;
+            pointer-events: none;
+            font-size: 17px;
+            font-weight: 600;
+            transition: opacity 0.15s;
+        }
+    </style>
 </head>
 <body>
-  <div class="sidebar">
-    <h1>Axentra SOC</h1>
-    <div class="menu">
-      <button class="menu-btn active" onclick="showSection('dashboard')">Dashboard</button>
-      <button class="menu-btn" onclick="showSection('incidents')">Incidents</button>
-      <button class="menu-btn" onclick="showSection('threatmap')">Threat Map</button>
-      <button class="menu-btn" onclick="showSection('users')">Users</button>
-      <button class="menu-btn" onclick="showSection('forensics')">Forensics</button>
+    <div class="threat-map-container">
+        <h2>Threat Map</h2>
+        <div id="globeViz"></div>
+        <div class="threat-legend">
+            <span class="red">Red:</span> Active attacks&nbsp;&nbsp;
+            <span class="orange">Orange:</span> Recent attempts&nbsp;&nbsp;
+            <span class="yellow">Yellow:</span> Suspicious activity
+        </div>
     </div>
-    <button class="logout-btn" onclick="location.href='index.html'">Logout</button>
-  </div>
-  <div class="main-content">
-    <!-- Dashboard -->
-    <div id="section-dashboard" class="section-box">
-      <div class="section-title">Welcome to Axentra SOC</div>
-      <div>Real-time threat monitoring.<br>
-      <b>Active Incidents:</b> 3 <br>
-      <b>Live Users:</b> 22 <br>
-      <b>Last Attack:</b> 12 min ago (SQL Injection)
-      </div>
-      <div style="margin-top:33px; font-size:24px; color:#FFD600; font-weight:700;">Summary</div>
-      <ul style="font-size:19px;">
-        <li>99.9% Uptime</li>
-        <li>AI-driven threat detection</li>
-        <li>Automatic response to critical events</li>
-      </ul>
-    </div>
-    <!-- Incidents -->
-    <div id="section-incidents" class="section-box" style="display:none">
-      <div class="section-title">Incident Log</div>
-      <table>
-        <tr><th>Time</th><th>Type</th><th>Status</th></tr>
-        <tr><td>09:41</td><td>Phishing Attempt</td><td style="color:#FFD600;">Blocked</td></tr>
-        <tr><td>09:17</td><td>SQL Injection</td><td style="color:#38ff6b;">Mitigated</td></tr>
-        <tr><td>08:55</td><td>DDoS</td><td style="color:#ff6000;">Under Investigation</td></tr>
-      </table>
-      <div style="margin-top:15px; color:#FFD600;">3 new incidents detected in the past hour!</div>
-    </div>
-    <!-- Threat Map -->
-    <div id="section-threatmap" class="section-box" style="display:none">
-      <div class="section-title">Threat Map</div>
-      <div class="map-container">
-        <div id="threatmap"></div>
-      </div>
-      <div class="legend">
-        <span style="color:red;">Red:</span> Active attacks
-        <span style="color:orange;">Orange:</span> Recent attempts
-        <span style="color:gold;">Yellow:</span> Suspicious activity
-      </div>
-    </div>
-    <!-- Users -->
-    <div id="section-users" class="section-box" style="display:none">
-      <div class="section-title">Users & Roles</div>
-      <table>
-        <tr><th>User</th><th>Role</th><th>Status</th></tr>
-        <tr><td>admin@paypal.com</td><td>Admin</td><td style="color:#38ff6b;">Active</td></tr>
-        <tr><td>j.doe@paypal.com</td><td>Analyst</td><td style="color:#38ff6b;">Active</td></tr>
-        <tr><td>s.eco@paypal.com</td><td>Read-Only</td><td style="color:gray;">Inactive</td></tr>
-      </table>
-    </div>
-    <!-- Forensics -->
-    <div id="section-forensics" class="section-box" style="display:none">
-      <div class="section-title">Forensics</div>
-      <ul style="font-size:18px;">
-        <li>Full packet capture available for past 72h</li>
-        <li>Malware sandboxing (automated)</li>
-        <li>
-          Download last report: 
-          <button onclick="downloadPDF()" style="margin-left:13px; font-size:17px; padding:7px 20px; border-radius:8px; background:#FFD600; color:#16203a; font-weight:600; border:none; box-shadow:0 1px 8px #ffd70055;">Download PDF</button>
-        </li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- LEAFLET MAP LIBRARY -->
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script>
-    // Menu switching logic
-    function showSection(section) {
-      document.querySelectorAll('.menu-btn').forEach(btn => btn.classList.remove('active'));
-      document.querySelectorAll('.section-box').forEach(sec => sec.style.display='none');
-      document.querySelector('[onclick="showSection(\''+section+'\')"]').classList.add('active');
-      document.getElementById('section-'+section).style.display='';
-    }
-    // PDF dummy export
-    function downloadPDF() {
-      let blob = new Blob([
-        'Axentra SOC Forensics Report\n\nFull packet capture available for past 72h\nMalware sandboxing (automated)\nIncidents:\n09:41  Phishing Attempt   Blocked\n09:17  SQL Injection      Mitigated\n08:55  DDoS               Under Investigation\n'
-      ], {type: "application/pdf"});
-      let a = document.createElement('a');
-      a.href = window.URL.createObjectURL(blob);
-      a.download = 'forensics_report.txt'; // Note: PDF requires real generator. This will download TXT.
-      a.click();
-    }
-    // Leaflet Threat Map
-    setTimeout(function(){
-      if(document.getElementById('threatmap')){
-        var map = L.map('threatmap', { zoomControl:false, attributionControl:false }).setView([37, 20], 2.05);
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          maxZoom: 6, minZoom: 2
-        }).addTo(map);
-        // Threat markers
-        var threats = [
-          {name:"Russia",  lat:56, lng:45,   color:'red'},
-          {name:"China",   lat:35, lng:103,  color:'orange'},
-          {name:"Malaysia",lat:4,  lng:102,  color:'gold'},
-          {name:"Iran",    lat:32, lng:53,   color:'red'},
-          {name:"USA",     lat:39, lng:-95,  color:'orange'},
-          {name:"Israel",  lat:31.5, lng:34.8, color:'gold'},
+    <div id="country-tooltip" class="country-tooltip" style="opacity:0"></div>
+    <script>
+        // Define countries with threats
+        // Format: { name: 'Country Name', threat: 'red' | 'orange' | 'yellow', label: 'Type of threat' }
+        const THREAT_COUNTRIES = [
+            { name: 'Russia', threat: 'red', label: 'Active attacks' },
+            { name: 'China', threat: 'red', label: 'Active attacks' },
+            { name: 'Malaysia', threat: 'orange', label: 'Recent attempts' },
+            { name: 'Iran', threat: 'red', label: 'Active attacks' },
+            { name: 'North Korea', threat: 'yellow', label: 'Suspicious activity' },
+            { name: 'Brazil', threat: 'orange', label: 'Recent attempts' },
+            { name: 'Ukraine', threat: 'yellow', label: 'Suspicious activity' },
+            { name: 'USA', threat: 'orange', label: 'Recent attempts' }
         ];
-        threats.forEach(t=>{
-          L.circleMarker([t.lat, t.lng], {
-            radius: 16,
-            fillColor: t.color,
-            color: "#232b3e",
-            weight: 3,
-            opacity: 0.7,
-            fillOpacity: 0.65
-          }).addTo(map).bindTooltip(t.name, {permanent:false});
+
+        // Threat colors
+        const THREAT_COLORS = {
+            'red': '#FF4444',
+            'orange': '#FFA500',
+            'yellow': '#FFF700'
+        };
+
+        // Load world topojson
+        fetch('https://unpkg.com/world-atlas@2.0.2/countries-110m.json')
+        .then(res => res.json())
+        .then(countriesTopo => {
+            // Convert to geojson
+            const countries = window.topojson.feature(countriesTopo, countriesTopo.objects.countries).features;
+            // Map country names to threats
+            countries.forEach(c => {
+                const found = THREAT_COUNTRIES.find(tc => tc.name.toLowerCase() === c.properties.name.toLowerCase());
+                if (found) {
+                    c.threat = found.threat;
+                    c.threatLabel = found.label;
+                }
+            });
+
+            // Init globe
+            const globe = Globe()
+                (document.getElementById('globeViz'))
+                .globeImageUrl('//unpkg.com/three-globe/example/img/earth-dark.jpg')
+                .backgroundColor('#101c2a')
+                .polygonsData(countries)
+                .polygonAltitude(d => d.threat ? 0.08 : 0.01)
+                .polygonCapColor(d => d.threat ? THREAT_COLORS[d.threat] : 'rgba(80,120,190,0.15)')
+                .polygonSideColor(() => 'rgba(30,40,50,0.20)')
+                .polygonStrokeColor(d => d.threat ? '#fff' : '#aee0ff10')
+                .polygonLabel(d => d.threat ? `<b>${d.properties.name}</b><br/>${d.threatLabel}` : `<b>${d.properties.name}</b>`)
+                .polygonsTransitionDuration(400)
+                .onPolygonHover((polygon) => {
+                    // Tooltip on hover
+                    const tooltip = document.getElementById('country-tooltip');
+                    if (polygon && polygon.threat) {
+                        tooltip.innerHTML = `<b>${polygon.properties.name}</b><br><span style="color:${THREAT_COLORS[polygon.threat]};">${polygon.threatLabel}</span>`;
+                        tooltip.style.opacity = 1;
+                    } else {
+                        tooltip.style.opacity = 0;
+                    }
+                });
+
+            // Tooltip follow mouse
+            document.addEventListener('mousemove', e => {
+                const tooltip = document.getElementById('country-tooltip');
+                tooltip.style.left = (e.clientX + 15) + 'px';
+                tooltip.style.top = (e.clientY - 20) + 'px';
+            });
         });
-      }
-    },300);
-  </script>
+
+        // Inject topojson script (required for world-atlas)
+        (function(){
+            var s = document.createElement('script');
+            s.src = 'https://unpkg.com/topojson-client@3.1.0/dist/topojson-client.min.js';
+            document.body.appendChild(s);
+        })();
+    </script>
 </body>
 </html>
