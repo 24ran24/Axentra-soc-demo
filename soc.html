@@ -1,202 +1,170 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Axentra SOC - Threat Map</title>
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:700,400" rel="stylesheet">
-    <style>
-        body {
-            background: #102033;
-            font-family: 'Montserrat', sans-serif;
-            margin: 0;
-            color: #fff;
-        }
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 230px;
-            height: 100vh;
-            background: #141f2a;
-            box-shadow: 2px 0 8px rgba(0,0,0,0.22);
-            z-index: 10;
-        }
-        .sidebar h1 {
-            color: #ffd600;
-            font-size: 2.2em;
-            font-weight: 700;
-            margin: 30px 0 30px 28px;
-            letter-spacing: 2px;
-        }
-        .nav {
-            margin-top: 30px;
-        }
-        .nav a {
-            display: block;
-            padding: 20px 0 20px 35px;
-            color: #dbe3f7;
-            text-decoration: none;
-            font-size: 1.25em;
-            font-weight: 600;
-            border-left: 7px solid transparent;
-            transition: all .2s;
-        }
-        .nav a.active, .nav a:hover {
-            color: #ffd600;
-            background: #232f3f;
-            border-left: 7px solid #ffd600;
-        }
-        .logout-btn {
-            position: absolute;
-            bottom: 30px;
-            left: 35px;
-            width: 150px;
-            padding: 17px 0;
-            background: #ffd600;
-            color: #222;
-            font-weight: 700;
-            border: none;
-            border-radius: 16px;
-            font-size: 1.35em;
-            box-shadow: 0 4px 22px #ffd60044;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .logout-btn:hover { background: #fff200; }
-        .main-content {
-            margin-left: 260px;
-            padding: 60px 40px 20px 40px;
-        }
-        .card {
-            background: #1b2532;
-            border-radius: 28px;
-            box-shadow: 0 3px 24px #00000028;
-            padding: 35px;
-            margin-bottom: 35px;
-        }
-        h2 {
-            color: #ffd600;
-            font-size: 2.2em;
-            font-weight: 700;
-            margin-bottom: 25px;
-        }
-        /* For map legend */
-        .legend {
-            margin-top: 30px;
-            font-size: 1.1em;
-            font-weight: 600;
-        }
-        .legend span {
-            margin-right: 10px;
-        }
-        .legend .red { color: #ff4444; }
-        .legend .orange { color: orange; }
-        .legend .yellow { color: yellow; }
-        /* Map container style */
-        #map-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 450px;
-        }
-        #globeViz {
-            width: 440px;
-            height: 440px;
-            background: #141f2a;
-            border-radius: 50%;
-            box-shadow: 0 2px 22px #0006;
-        }
-        @media (max-width: 900px) {
-            .main-content { margin-left: 0; padding: 5vw 1vw;}
-            .sidebar { display:none;}
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Axentra SOC Portal</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* דגשים לעיצוב אם לא קיים style.css */
+    body {
+      margin: 0; background: #162032; font-family: Arial, sans-serif; color: #fff;
+    }
+    .sidebar {
+      width: 240px;
+      background: #17223b;
+      height: 100vh;
+      position: fixed;
+      left: 0; top: 0; bottom: 0;
+      display: flex; flex-direction: column;
+      z-index: 10;
+      box-shadow: 2px 0 8px #0002;
+    }
+    .logo {
+      font-size: 2em;
+      color: #ffd600;
+      font-weight: bold;
+      padding: 24px 0 20px 28px;
+      letter-spacing: 2px;
+    }
+    .nav {
+      flex: 1; margin-top: 10px;
+    }
+    .nav a {
+      display: block; padding: 18px 0 18px 28px;
+      color: #b0bed8; text-decoration: none;
+      font-size: 1.25em; font-weight: 600;
+      border-left: 4px solid transparent;
+      transition: background 0.2s, color 0.2s;
+    }
+    .nav a.active, .nav a:hover {
+      background: #212f49;
+      color: #ffd600;
+      border-left: 4px solid #ffd600;
+    }
+    .logout-btn {
+      background: #ffd600;
+      color: #232323;
+      font-size: 1.2em;
+      font-weight: bold;
+      border: none;
+      margin: 28px;
+      padding: 12px 0;
+      border-radius: 14px;
+      box-shadow: 0 4px 16px #ffd60077;
+      cursor: pointer;
+      transition: box-shadow 0.2s;
+    }
+    .logout-btn:hover { box-shadow: 0 6px 24px #ffd600bb; }
+
+    .content {
+      margin-left: 240px; padding: 0; min-height: 100vh;
+      background: #10192a url('Axentra background.png') center/cover no-repeat;
+    }
+    .container {
+      max-width: 1320px; margin: 0 auto; padding: 56px 0 0 0;
+    }
+    .card {
+      background: #21293b;
+      border-radius: 30px;
+      padding: 42px 44px 40px 44px;
+      box-shadow: 0 8px 32px #0006;
+      margin-bottom: 36px;
+      min-height: 200px;
+    }
+    .card h1, .card h2 {
+      color: #ffd600; margin-top: 0; margin-bottom: 24px; font-size: 2.1em;
+    }
+    /* עיצוב מפת האיומים */
+    #map-container {
+      margin: 0 auto; margin-top: 10px; margin-bottom: 16px;
+      width: 560px; height: 480px; background: none;
+      border-radius: 24px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 40px #0005;
+    }
+    .threat-legend {
+      font-size: 1.15em; margin-top: 18px; padding-bottom: 10px;
+      text-align: left;
+    }
+    .threat-legend span { font-weight: bold; }
+    .threat-legend .red { color: #ff4444; }
+    .threat-legend .orange { color: orange; }
+    .threat-legend .yellow { color: gold; }
+    @media (max-width: 900px) {
+      .container, .card { padding: 16px !important; }
+      #map-container { width: 95vw; height: 50vw; min-height: 220px;}
+    }
+  </style>
 </head>
 <body>
-    <div class="sidebar">
-        <h1>Axentra SOC</h1>
-        <div class="nav">
-            <a href="index.html">Dashboard</a>
-            <a href="incidents.html">Incidents</a>
-            <a href="soc.html" class="active">Threat Map</a>
-            <a href="users.html">Users</a>
-            <a href="forensics.html">Forensics</a>
-        </div>
-        <button class="logout-btn">Logout</button>
+  <div class="sidebar">
+    <div class="logo">Axentra SOC</div>
+    <div class="nav">
+      <a href="index.html">Dashboard</a>
+      <a href="incidents.html">Incidents</a>
+      <a href="soc.html" class="active">Threat Map</a>
+      <a href="users.html">Users</a>
+      <a href="forensics.html">Forensics</a>
     </div>
-    <div class="main-content">
-        <div class="card">
-            <h2>Threat Map</h2>
-            <div id="map-container">
-                <div id="globeViz"></div>
-            </div>
-            <div class="legend">
-                <span class="red"><b>Red:</b> Active attacks</span>
-                <span class="orange"><b>Orange:</b> Recent attempts</span>
-                <span class="yellow"><b>Yellow:</b> Suspicious activity</span>
-            </div>
+    <button class="logout-btn">Logout</button>
+  </div>
+  <div class="content">
+    <div class="container">
+      <div class="card">
+        <h1>Threat Map</h1>
+        <div id="map-container"></div>
+        <div class="threat-legend">
+          <span class="red">Red:</span> Active attacks &nbsp;
+          <span class="orange">Orange:</span> Recent attempts &nbsp;
+          <span class="yellow">Yellow:</span> Suspicious activity
         </div>
+      </div>
     </div>
-    <!-- Three.js & Globe.gl -->
-    <script src="https://unpkg.com/three@0.121.1/build/three.min.js"></script>
-    <script src="https://unpkg.com/globe.gl@2.30.7/dist/globe.gl.min.js"></script>
-    <script>
-        // Example: mark Russia/China/Iran in red, Malaysia in orange, Ukraine in yellow, etc.
-        const highlightCountries = [
-            { code: 'CN', color: 'red', label: 'Active attacks' },
-            { code: 'RU', color: 'red', label: 'Active attacks' },
-            { code: 'IR', color: 'red', label: 'Active attacks' },
-            { code: 'KP', color: 'red', label: 'Active attacks' },
-            { code: 'UA', color: 'yellow', label: 'Suspicious activity' },
-            { code: 'MY', color: 'orange', label: 'Recent attempts' },
-            { code: 'US', color: 'orange', label: 'Recent attempts' }
-        ];
+  </div>
 
-        // fetch country polygons (GeoJSON)
-        fetch('https://unpkg.com/world-atlas@2.0.2/countries-110m.json').then(res => res.json())
-            .then(countries => {
-                const Globe = window.Globe;
-                const globe = Globe()
-                  (document.getElementById('globeViz'))
-                  .globeImageUrl('//unpkg.com/three-globe/example/img/earth-night.jpg')
-                  .backgroundColor('rgba(0,0,0,0)')
-                  .width(440)
-                  .height(440)
-                  .showGraticules(false)
-                  .polygonsData(
-                      window.topojson.feature(countries, countries.objects.countries).features
-                  )
-                  .polygonCapColor(feat => {
-                    const match = highlightCountries.find(c => c.code === feat.id || c.code === feat.properties.iso_a2);
-                    return match ? match.color : 'rgba(0,0,0,0.36)';
-                  })
-                  .polygonStrokeColor(() => '#1a3555')
-                  .polygonAltitude(feat => {
-                    const match = highlightCountries.find(c => c.code === feat.id || c.code === feat.properties.iso_a2);
-                    return match ? 0.06 : 0.007;
-                  })
-                  .polygonLabel(feat => {
-                    const match = highlightCountries.find(c => c.code === feat.id || c.code === feat.properties.iso_a2);
-                    return match
-                        ? `<b>${feat.properties.name}</b><br>${match.label}`
-                        : `<b>${feat.properties.name}</b>`;
-                  })
-                  .onPolygonHover((feat) => globe
-                    .polygonAltitude(feat2 =>
-                      feat2 === feat
-                        ? 0.11
-                        : highlightCountries.find(c => c.code === feat2.id || c.code === feat2.properties.iso_a2)
-                            ? 0.06
-                            : 0.007
-                    )
-                  );
+  <!-- Globe.js + קוד מפת האיומים -->
+  <script src="https://unpkg.com/globe.gl"></script>
+  <script src="https://unpkg.com/topojson-client@3"></script>
+  <script>
+    fetch('https://unpkg.com/world-atlas@2.0.2/countries-110m.json')
+      .then(res => res.json())
+      .then(worldData => {
+        const countries = window.topojson.feature(worldData, worldData.objects.countries).features;
+        // דוגמת צבעים לפי מדינות (תעדכן מה שבא לך)
+        const colorByCountry = {
+          'Russia': 'red',
+          'China': 'red',
+          'Ukraine': 'yellow',
+          'United States of America': 'orange',
+          'Iran': 'orange',
+          'Israel': 'yellow'
+        };
 
-                // zoom and orient globe
-                globe.pointOfView({ lat: 42, lng: 80, altitude: 2.15 });
-            });
-
-        // TopoJSON library required for country conversion
-    </script>
-    <script src="https://unpkg.com/topojson@3"></script>
+        Globe()(document.getElementById('map-container'))
+          .globeImageUrl('//unpkg.com/three-globe/example/img/earth-dark.jpg')
+          .backgroundColor('rgba(0,0,0,0)')
+          .polygonsData(countries)
+          .polygonCapColor(feat => colorByCountry[feat.properties.name] || 'rgba(60,100,200,0.08)')
+          .polygonSideColor(() => 'rgba(20,20,30,0.2)')
+          .polygonStrokeColor(() => '#232323')
+          .polygonLabel(feat => `
+            <div>
+              <b>${feat.properties.name}</b><br/>
+              ${colorByCountry[feat.properties.name] === 'red' ? 'Active attacks' : ''}
+              ${colorByCountry[feat.properties.name] === 'orange' ? 'Recent attempts' : ''}
+              ${colorByCountry[feat.properties.name] === 'yellow' ? 'Suspicious activity' : ''}
+            </div>
+          `)
+          .atmosphereColor('#3a228a')
+          .atmosphereAltitude(0.18)
+          .showGraticules(false)
+          .polygonsTransitionDuration(400)
+          .autoRotate(true)
+          .autoRotateSpeed(0.6)
+          .width(540)
+          .height(420);
+      });
+  </script>
 </body>
 </html>
