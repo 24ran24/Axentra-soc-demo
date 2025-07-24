@@ -3,44 +3,46 @@
 <head>
   <meta charset="UTF-8" />
   <title>Axentra SOC Portal</title>
-  <link href="https://fonts.googleapis.com/css?family=Montserrat:700,900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,900&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
-    body { background: #121c2b; color: #ffd700; font-family: Montserrat, Arial, sans-serif; margin:0;}
-    .sidebar { width: 260px; background: #172033; height: 100vh; float: left; padding-top: 20px; position: fixed; }
-    .sidebar h1 { font-size: 2.5em; padding: 0 0 40px 24px; color: #ffd700;}
-    .sidebar .nav { width: 100%; background: none; border: none; color: #fff; font-size: 1.25em; text-align: left; padding: 18px 0 18px 24px; cursor: pointer; transition: 0.2s; outline:none; }
-    .sidebar .nav.active { background: #232d41; color: #ffd700; font-weight: bold; }
-    .sidebar .logout { background: #ffd700; color: #172033; font-size: 1.3em; font-weight: bold; border-radius: 16px; margin: 50px 24px 0 24px; box-shadow: 0 2px 16px #ffd70044; width: 85%; border:none; padding:20px;}
-    .main { margin-left: 260px; padding: 40px 50px; background: #172033; min-height: 100vh;}
+    body { background: #162032; color: #ffd700; font-family: 'Montserrat', Arial, sans-serif; margin:0;}
+    .sidebar { width: 240px; background: #202c42; height: 100vh; float: left; padding-top: 22px; position: fixed; }
+    .sidebar h1 { font-size: 2.2em; padding: 0 0 36px 22px; color: #ffd700; line-height: 1.1; }
+    .sidebar .nav { background: none; border: none; color: #fff; font-size: 1.1em; text-align: left; padding: 14px 0 14px 24px; cursor: pointer; transition: 0.2s; outline:none; width: 100%; }
+    .sidebar .nav.active { background: #242f45; color: #ffd700; font-weight: bold; }
+    .sidebar .logout { background: #ffd700; color: #202c42; font-size: 1.08em; font-weight: bold; border-radius: 13px; margin: 36px 22px 0 22px; box-shadow: 0 2px 10px #ffd70035; width: 86%; border:none; padding:15px;}
+    .main { margin-left: 240px; padding: 30px 40px; background: #192236; min-height: 100vh;}
     .tab { display:none;}
     .tab.active { display:block;}
-    .panel {background:#1a2233; border-radius:24px; padding:35px 32px; margin-bottom:32px;}
-    h2 {color:#ffd700; font-size:2.1em; margin:0 0 16px 0;}
-    h3 {color:#ffd700; font-size:1.4em;}
-    .summary li {margin-bottom:8px;}
-    .incident-table {width:100%; color:#fff; border-spacing:0;}
-    .incident-table th, .incident-table td {padding:13px 14px;}
-    .incident-table th {color:#ffd700; font-size:1.1em; border-bottom:1.5px solid #28344c;}
+    .panel {background:#232d41; border-radius:18px; padding:24px 28px; margin-bottom:25px;}
+    h2 {color:#ffd700; font-size:1.42em; margin:0 0 13px 0; font-weight: bold;}
+    h3 {color:#ffd700; font-size:1.1em;}
+    .summary li {margin-bottom:7px; color: #fff; font-size:1em;}
+    .incident-table {width:100%; color:#fff; border-spacing:0; font-size:1em;}
+    .incident-table th, .incident-table td {padding:10px 12px;}
+    .incident-table th {color:#ffd700; font-size:1em; border-bottom:1.5px solid #28344c;}
     .incident-table td {border-bottom:1px solid #222e45;}
     .status-blocked {color:#12ef62; font-weight:bold;}
     .status-mitigated {color:#ffa500;}
     .status-under {color:#ffd700;}
-    .users-table {width:100%; color:#fff; border-spacing:0;}
-    .users-table th, .users-table td {padding:14px 12px;}
-    .users-table th {color:#ffd700; font-size:1.1em; border-bottom:1.5px solid #28344c;}
+    .users-table {width:100%; color:#fff; border-spacing:0; font-size:1em;}
+    .users-table th, .users-table td {padding:11px 10px;}
+    .users-table th {color:#ffd700; font-size:1em; border-bottom:1.5px solid #28344c;}
     .users-table td {border-bottom:1px solid #222e45;}
     .forensics-link {color:#ffd700; font-weight:bold;}
-    .threat-legend {margin-top:24px; font-size:1.13em;}
-    .threat-legend span {margin-right:24px;}
+    .threat-legend {margin-top:14px; font-size:1em;}
+    .threat-legend span {margin-right:18px;}
     .threat-legend .red {color:#ff4c4c; font-weight:bold;}
     .threat-legend .orange {color:#ffa500; font-weight:bold;}
     .threat-legend .yellow {color:#ffff40; font-weight:bold;}
+    ul {padding-left:24px;}
+    a {color: #ffd700;}
     @media (max-width: 900px) {
-      .main {padding:15px;}
-      .panel {padding:15px;}
-      .sidebar {width:180px;}
-      .main {margin-left:180px;}
+      .main {padding:10px;}
+      .panel {padding:10px;}
+      .sidebar {width:150px;}
+      .main {margin-left:150px;}
     }
   </style>
 </head>
@@ -59,10 +61,12 @@
     <div id="tab-dashboard" class="tab active">
       <div class="panel">
         <h2>Welcome to Axentra SOC</h2>
-        Real-time threat monitoring.<br>
-        <b>Active Incidents:</b> 3<br>
-        <b>Live Users:</b> 22<br>
-        <b>Last Attack:</b> 12 min ago (SQL Injection)
+        <div style="color:#fff;font-size:1em;">
+          Real-time threat monitoring.<br>
+          <b>Active Incidents:</b> 3<br>
+          <b>Live Users:</b> 22<br>
+          <b>Last Attack:</b> 12 min ago (SQL Injection)
+        </div>
       </div>
       <div class="panel">
         <h2>Summary</h2>
@@ -75,7 +79,7 @@
     </div>
     <!-- Incidents -->
     <div id="tab-incidents" class="tab">
-      <div class="panel" style="background:#ffd700; color:#172033; font-weight:bold; font-size:1.25em;">
+      <div class="panel" style="background:#ffd700; color:#202c42; font-weight:bold; font-size:1.09em;">
         3 new incidents detected in the past hour!
       </div>
       <div class="panel">
@@ -100,7 +104,7 @@
     <div id="tab-threatmap" class="tab">
       <div class="panel">
         <h2>Threat Map</h2>
-        <div id="globe-container" style="height:400px;width:100%;max-width:600px;margin:0 auto;"></div>
+        <div id="globe-container" style="height:350px;width:100%;max-width:550px;margin:0 auto;background: #222b38;border-radius:10px;"></div>
         <div class="threat-legend">
           <span class="red">Red: Active attacks</span>
           <span class="orange">Orange: Recent attempts</span>
@@ -144,7 +148,7 @@
       if(tab === 'threatmap') drawMap();
     }
 
-    // Simple globe map using echarts (חינמי, עובד, אינטראקטיבי)
+    // Globe Map (echarts) — אינטראקטיבי, חינמי, עובד
     let mapInitialized = false;
     function drawMap() {
       if(mapInitialized) return;
@@ -156,23 +160,23 @@
           baseTexture: 'https://echarts.apache.org/examples/data-gl/asset/earth-dark.jpg',
           heightTexture: 'https://echarts.apache.org/examples/data-gl/asset/bathymetry_bw_composite_4k.jpg',
           shading: 'lambert',
-          environment: '#121c2b',
-          light: { main: { intensity: 2 }, ambient: { intensity: 0.5 } },
+          environment: '#172033',
+          light: { main: { intensity: 1.5 }, ambient: { intensity: 0.7 } },
         },
         series: [{
           type: 'map3D',
           map: 'world',
-          regionHeight: 1.5,
-          emphasis: { label: { show: true, color: '#fff', fontWeight:'bold', fontSize:16 } },
+          regionHeight: 2,
+          emphasis: { label: { show: true, color: '#fff', fontWeight:'bold', fontSize:15 } },
           itemStyle: {
             color: function(params) {
-              // דוגמאות: סימון מדינות בצבע לפי איום
+              // Example: mark country by threat level
               if(params.name === 'Russia' || params.name === 'China') return '#ff4c4c';
               if(params.name === 'United States' || params.name === 'Brazil') return '#ffa500';
               if(params.name === 'Ukraine') return '#ffff40';
               return '#29395c';
             },
-            borderColor: '#333'
+            borderColor: '#384060'
           },
           label: { show: false }
         }]
@@ -180,26 +184,26 @@
       myChart.on('mouseover', function (params) {
         // Tooltip דינמי (מדינה, סוג איום)
         if(params.name==='Russia'||params.name==='China')
-          myChart.setOption({ tooltip: { show: true, formatter: params.name+": Active attacks", backgroundColor:"#222", textStyle:{color:'#ffd700',fontWeight:'bold',fontSize:18} }});
+          myChart.setOption({ tooltip: { show: true, formatter: params.name+": Active attacks", backgroundColor:"#222", textStyle:{color:'#ffd700',fontWeight:'bold',fontSize:15} }});
         else if(params.name==='United States'||params.name==='Brazil')
-          myChart.setOption({ tooltip: { show: true, formatter: params.name+": Recent attempts", backgroundColor:"#222", textStyle:{color:'#ffa500',fontWeight:'bold',fontSize:18} }});
+          myChart.setOption({ tooltip: { show: true, formatter: params.name+": Recent attempts", backgroundColor:"#222", textStyle:{color:'#ffa500',fontWeight:'bold',fontSize:15} }});
         else if(params.name==='Ukraine')
-          myChart.setOption({ tooltip: { show: true, formatter: params.name+": Suspicious activity", backgroundColor:"#222", textStyle:{color:'#ffff40',fontWeight:'bold',fontSize:18} }});
+          myChart.setOption({ tooltip: { show: true, formatter: params.name+": Suspicious activity", backgroundColor:"#222", textStyle:{color:'#ffff40',fontWeight:'bold',fontSize:15} }});
         else
           myChart.setOption({ tooltip: { show: false }});
       });
     }
 
-    // PDF דמו (עובד!)
+    // PDF (דמו, עובד)
     function downloadPDF() {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(22);
-      doc.text('Forensics Report', 20, 30);
-      doc.setFontSize(15);
-      doc.text('Full packet capture available for past 72h', 20, 50);
-      doc.text('Malware sandboxing (automated)', 20, 60);
+      doc.setFontSize(18);
+      doc.text('Forensics Report', 20, 22);
+      doc.setFontSize(12);
+      doc.text('Full packet capture available for past 72h', 20, 38);
+      doc.text('Malware sandboxing (automated)', 20, 48);
       doc.save('forensics-report.pdf');
     }
   </script>
