@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Axentra SOC Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:700,500,400&display=swap" rel="stylesheet">
+    <!-- Globe.gl + topojson + jsPDF -->
+    <script src="https://unpkg.com/globe.gl"></script>
+    <script src="https://unpkg.com/topojson-client@3"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'IBM Plex Sans', Arial, sans-serif;
+            background: #111926 url('Axentra background.png') center center / cover no-repeat fixed;
+        }
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            background: #182139ee;
+            width: 240px;
+            padding: 0;
+            box-shadow: 2px 0 28px #00000030;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .sidebar-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #FFD600;
+            text-align: center;
+            padding: 32px 0 15px 0;
+            letter-spacing: 1.2px;
+            text-shadow: 0 2px 14px #ffd60030;
+            border-bottom: 1.2px solid #242d43;
+            margin-bottom: 8px;
+        }
+        .nav-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .nav-list li {
+            padding: 17px 0 17px 32px;
+            font-size: 19px;
+            font-weight: 600;
+            color: #b8c7e7;
+            cursor: pointer;
+            border-left: 4px solid transparent;
+            transition: background 0.13s, color 0.12s, border-color 0.15s;
+            user-select: none;
+        }
+        .nav-list li.active, .nav-list li:hover {
+            background: #222c42;
+            color: #FFD600;
+            border-left: 4px solid #FFD600;
+        }
+        .logout-btn {
+            margin: 38px auto 0 auto;
+            width: 80%;
+            padding: 12px 0;
+            border: none;
+            border-radius: 12px;
+            background: #FFD600;
+            color: #142447;
+            font-weight: 700;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background 0.14s, color 0.14s;
+            box-shadow: 0 3px 16px #ffd60033;
+        }
+        .logout-btn:hover {
+            background: #fff700;
+            color: #1d2d56;
+        }
+        .main-content {
+            flex: 1;
+            padding: 48px 48px 28px 48px;
+            background: #141b24b0;
+            min-height: 100vh;
+            color: #fff;
+            transition: background 0.2s;
+        }
+        @media (max-width: 900px) {
+            .dashboard-container { flex-direction: column; }
+            .sidebar { width: 100%; flex-direction: row; overflow-x: auto; height: 70px; min-width: unset; }
+            .sidebar-title { display: none; }
+            .nav-list { display: flex; flex-direction: row; width: 100%; }
+            .nav-list li { flex: 1; padding: 13px 8px 13px 8px; font-size: 16px; border-left: none; border-bottom: 3px solid transparent; }
+            .nav-list li.active, .nav-list li:hover { border-bottom: 3px solid #FFD600; border-left: none; }
+            .logout-btn { margin: 10px auto 10px auto; width: 60%; }
+        }
+        .card {
+            background: #1b2434;
+            border-radius: 17px;
+            box-shadow: 0 2px 32px #0000002c;
+            padding: 28px 22px 20px 22px;
+            margin-bottom: 32px;
+        }
+        .card h2 {
+            color: #FFD600;
+            margin-top: 0;
+        }
+        .fake-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .fake-table th, .fake-table td {
+            border-bottom: 1px solid #232c3e;
+            padding: 10px 7px;
+            text-align: left;
+        }
+        .fake-table th {
+            color: #FFD600;
+        }
+        .alert {
+            background: #FFD600;
+            color: #142447;
+            padding: 14px 22px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            font-weight: 700;
+            box-shadow: 0 3px 16px #ffd60033;
+            font-size: 20px;
+        }
+        /* עדכון גודל לכפתור PDF */
+        .pdf-btn {
+            display: inline-block;
+            background: #FFD600;
+            color: #142447;
+            border-radius: 8px;
+            padding: 6px 16px;
+            font-weight: 700;
+            font-size: 15px;
+            border: none;
+            margin-top: 5px;
+            cursor: pointer;
+            box-shadow: 0 2px 12px #ffd60033;
+            text-decoration: none;
+            transition: background 0.14s, color 0.14s;
+        }
+        .pdf-btn:hover {
+            background: #fff700;
+            color: #1d2d56;
+        }
+        /* גלובוס */
+        #globeViz {
+            width: 400px;
+            height: 330px;
+            margin: 12px auto 5px auto;
+            border-radius: 14px;
+            box-shadow: 0 2px 18px #00000022;
+            display: block;
+            background: #141b24;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <nav class="sidebar">
+            <div class="sidebar-title">Axentra SOC</div>
+            <ul class="nav-list" id="navList">
+                <li class="active" onclick="loadTab('dashboard', this)">Dashboard</li>
+                <li onclick="loadTab('incidents', this)">Incidents</li>
+                <li onclick="loadTab('threatmap', this)">Threat Map</li>
+                <li onclick="loadTab('users', this)">Users</li>
+                <li onclick="loadTab('forensics', this)">Forensics</li>
+            </ul>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </nav>
+        <main class="main-content" id="main-content">
+            <!-- כאן נטען התוכן -->
+        </main>
+    </div>
+    <script>
+        // נתוני אינסידנטים לדוח
+        const incidentData = [
+            ['09:41', 'Phishing Attempt', 'Blocked'],
+            ['09:17', 'SQL Injection', 'Mitigated'],
+            ['08:55', 'DDoS', 'Under Investigation']
+        ];
+
+        function loadTab(tab, element) {
+            // highlight nav
+            var navItems = document.querySelectorAll('.nav-list li');
+            navItems.forEach(function(item){ item.classList.remove('active'); });
+            if(element) element.classList.add('active');
+
+            var main = document.getElementById('main-content');
+            if(tab === 'dashboard') {
+                main.innerHTML = `
+                <div class="card">
+                    <h2>Welcome to Axentra SOC</h2>
+                    <p>
+                        Real-time threat monitoring. <br>
+                        <b>Active Incidents:</b> <span id="incidentCount">3</span> <br>
+                        <b>Live Users:</b> <span id="userCount">22</span> <br>
+                        <b>Last Attack:</b> 12 min ago (SQL Injection)
+                    </p>
+                </div>
+                <div class="card">
+                    <h2>Summary</h2>
+                    <ul>
+                        <li>99.9% Uptime</li>
+                        <li>AI-driven threat detection</li>
+                        <li>Automatic response to critical events</li>
+                    </ul>
+                </div>
+                `;
+            }
+            if(tab === 'incidents') {
+                main.innerHTML = `
+                <div class="alert">3 new incidents detected in the past hour!</div>
+                <div class="card">
+                    <h2>Incident Log</h2>
+                    <table class="fake-table">
+                        <tr><th>Time</th><th>Type</th><th>Status</th></tr>
+                        <tr><td>09:41</td><td>Phishing Attempt</td><td>Blocked</td></tr>
+                        <tr><td>09:17</td><td>SQL Injection</td><td>Mitigated</td></tr>
+                        <tr><td>08:55</td><td>DDoS</td><td>Under Investigation</td></tr>
+                    </table>
+                </div>
+                `;
+            }
+            if(tab === 'threatmap') {
+                main.innerHTML = `
+                <div class="card">
+                    <h2>Threat Map</h2>
+                    <div id="globeViz"></div>
+                    <div style="margin-top:8px; font-size:15px;">
+                        <b style="color:red;">Red</b>: Active attacks &nbsp; 
+                        <b style="color:orange;">Orange</b>: Recent attempts &nbsp; 
+                        <b style="color:#FFD600;">Yellow</b>: Suspicious activity
+                    </div>
+                </div>
+                `;
+                setTimeout(drawGlobe, 50);
+            }
+            if(tab === 'users') {
+                main.innerHTML = `
+                <div class="card">
+                    <h2>Users & Roles</h2>
+                    <table class="fake-table">
+                        <tr><th>User</th><th>Role</th><th>Status</th></tr>
+                        <tr><td>admin@paypal.com</td><td>Admin</td><td>Active</td></tr>
+                        <tr><td>j.doe@paypal.com</td><td>Analyst</td><td>Active</td></tr>
+                        <tr><td>s.eco@paypal.com</td><td>Read-Only</td><td>Inactive</td></tr>
+                    </table>
+                </div>
+                `;
+            }
+            if(tab === 'forensics') {
+                main.innerHTML = `
+                <div class="card">
+                    <h2>Forensics</h2>
+                    <ul>
+                        <li>Full packet capture available for past 72h</li>
+                        <li>Malware sandboxing (automated)</li>
+                        <li>Download last report: <button class="pdf-btn" onclick="downloadFakePDF();return false;">Download PDF</button></li>
+                    </ul>
+                </div>
+                `;
+            }
+        }
+
+        // גלובוס תלת־מימד אינטראקטיבי עם מדינות בעייתיות
+        function drawGlobe() {
+            // הרס גלובוס קודם אם נטען
+            if(window._lastGlobe) {
+                window._lastGlobe.innerHTML = '';
+            }
+            const problematicCountries = [
+                { code: 'RU', name: 'Russia', color: 'red' },
+                { code: 'CN', name: 'China', color: 'orange' },
+                { code: 'MY', name: 'Malaysia', color: 'orange' },
+                { code: 'IR', name: 'Iran', color: 'orange' },
+                { code: 'KP', name: 'North Korea', color: 'red' }
+            ];
+            fetch('https://unpkg.com/world-atlas/countries-110m.json')
+            .then(res => res.json())
+            .then(countries => {
+                const globe = Globe()
+                (document.getElementById('globeViz'))
+                .globeImageUrl('//unpkg.com/three-globe/example/img/earth-night.jpg')
+                .backgroundColor('#141b24')
+                .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
+                .width(400).height(330)
+                .polygonsData(
+                    window.topojson.feature(countries, countries.objects.countries).features
+                )
+                .polygonCapColor(feat => {
+                    const found = problematicCountries.find(p => p.code === feat.id);
+                    return found ? found.color : 'rgba(46,125,246,0.19)';
+                })
+                .polygonSideColor(() => 'rgba(0,100,200,0.07)')
+                .polygonStrokeColor(feat => {
+                    const found = problematicCountries.find(p => p.code === feat.id);
+                    return found ? found.color : '#263146';
+                })
+                .onPolygonClick(feat => {
+                    const found = problematicCountries.find(p => p.code === feat.id);
+                    if(found) alert('Threat detected in: ' + found.name);
+                })
+                .polygonsTransitionDuration(400);
+                window._lastGlobe = document.getElementById('globeViz');
+            });
+        }
+
+        // כפתור PDF אמיתי
+        function downloadFakePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.setFontSize(18);
+            doc.text('Axentra SOC - Incidents Report', 14, 18);
+
+            doc.setFontSize(12);
+            doc.text('Generated: ' + new Date().toLocaleString(), 14, 26);
+
+            doc.autoTable({
+                startY: 32,
+                head: [['Time', 'Type', 'Status']],
+                body: incidentData
+            });
+
+            doc.save('Axentra_SOC_Incidents.pdf');
+        }
+
+        function logout() {
+            window.location.href = "index.html";
+        }
+        // טען דף ברירת מחדל
+        window.onload = function() { loadTab('dashboard', document.querySelector('.nav-list li')); };
+    </script>
+</body>
+</html>
