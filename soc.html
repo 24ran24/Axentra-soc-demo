@@ -3,99 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <title>Axentra SOC - Threat Map</title>
-    <script src="https://unpkg.com/three@0.150.1/build/three.min.js"></script>
-    <script src="https://unpkg.com/globe.gl"></script>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:700,400" rel="stylesheet">
     <style>
         body {
+            background: #102033;
+            font-family: 'Montserrat', sans-serif;
             margin: 0;
-            background: #121d2b;
-            font-family: 'Arial Rounded MT Bold', Arial, sans-serif;
+            color: #fff;
         }
         .sidebar {
             position: fixed;
             left: 0;
             top: 0;
             width: 230px;
-            height: 100%;
-            background: #182535;
-            color: #ffd600;
-            display: flex;
-            flex-direction: column;
-            z-index: 100;
+            height: 100vh;
+            background: #141f2a;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.22);
+            z-index: 10;
         }
         .sidebar h1 {
-            padding: 30px 0 10px 25px;
-            margin: 0;
-            font-size: 2.1em;
-        }
-        .sidebar .nav {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            margin-top: 20px;
-        }
-        .sidebar .nav a {
             color: #ffd600;
-            text-decoration: none;
-            padding: 16px 0 16px 35px;
-            font-size: 1.3em;
-            transition: background 0.2s;
-        }
-        .sidebar .nav a.active, .sidebar .nav a:hover {
-            background: #232c3b;
-            color: #fff;
-        }
-        .sidebar .logout-btn {
-            margin: 25px;
-            padding: 15px;
-            font-size: 1.1em;
-            background: #ffd600;
-            color: #232c3b;
-            font-weight: bold;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            box-shadow: 0 6px 20px #232c3b44;
-            transition: background 0.2s;
-        }
-        .main-content {
-            margin-left: 230px;
-            padding: 35px 50px 10px 50px;
-        }
-        .box {
-            background: #202734;
-            border-radius: 25px;
-            padding: 35px;
-            margin-bottom: 45px;
-        }
-        .threat-map-title {
-            color: #ffd600;
-            font-size: 2.3em;
-            margin-bottom: 20px;
+            font-size: 2.2em;
+            font-weight: 700;
+            margin: 30px 0 30px 28px;
             letter-spacing: 2px;
         }
-        .threat-map-legend {
-            margin-top: 18px;
-            font-size: 1.13em;
+        .nav {
+            margin-top: 30px;
         }
-        .threat-map-legend span {
-            font-weight: bold;
-        }
-        .threat-map-legend .red { color: #ff4b4b; }
-        .threat-map-legend .orange { color: #ff9800; }
-        .threat-map-legend .yellow { color: #ffd600; }
-        #globeViz {
-            margin: 0 auto;
+        .nav a {
             display: block;
-            width: 500px;
-            height: 500px;
-            background: #161d27;
-            border-radius: 20px;
-            box-shadow: 0 10px 32px #161d2744;
+            padding: 20px 0 20px 35px;
+            color: #dbe3f7;
+            text-decoration: none;
+            font-size: 1.25em;
+            font-weight: 600;
+            border-left: 7px solid transparent;
+            transition: all .2s;
+        }
+        .nav a.active, .nav a:hover {
+            color: #ffd600;
+            background: #232f3f;
+            border-left: 7px solid #ffd600;
+        }
+        .logout-btn {
+            position: absolute;
+            bottom: 30px;
+            left: 35px;
+            width: 150px;
+            padding: 17px 0;
+            background: #ffd600;
+            color: #222;
+            font-weight: 700;
+            border: none;
+            border-radius: 16px;
+            font-size: 1.35em;
+            box-shadow: 0 4px 22px #ffd60044;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .logout-btn:hover { background: #fff200; }
+        .main-content {
+            margin-left: 260px;
+            padding: 60px 40px 20px 40px;
+        }
+        .card {
+            background: #1b2532;
+            border-radius: 28px;
+            box-shadow: 0 3px 24px #00000028;
+            padding: 35px;
+            margin-bottom: 35px;
+        }
+        h2 {
+            color: #ffd600;
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 25px;
+        }
+        /* For map legend */
+        .legend {
+            margin-top: 30px;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+        .legend span {
+            margin-right: 10px;
+        }
+        .legend .red { color: #ff4444; }
+        .legend .orange { color: orange; }
+        .legend .yellow { color: yellow; }
+        /* Map container style */
+        #map-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 450px;
+        }
+        #globeViz {
+            width: 440px;
+            height: 440px;
+            background: #141f2a;
+            border-radius: 50%;
+            box-shadow: 0 2px 22px #0006;
         }
         @media (max-width: 900px) {
-            .main-content { padding: 10px; }
-            #globeViz { width: 99vw; height: 400px; }
+            .main-content { margin-left: 0; padding: 5vw 1vw;}
+            .sidebar { display:none;}
         }
     </style>
 </head>
@@ -104,81 +117,86 @@
         <h1>Axentra SOC</h1>
         <div class="nav">
             <a href="index.html">Dashboard</a>
-            <a href="#" >Incidents</a>
-            <a href="#" class="active">Threat Map</a>
-            <a href="#">Users</a>
-            <a href="#">Forensics</a>
+            <a href="incidents.html">Incidents</a>
+            <a href="soc.html" class="active">Threat Map</a>
+            <a href="users.html">Users</a>
+            <a href="forensics.html">Forensics</a>
         </div>
         <button class="logout-btn">Logout</button>
     </div>
     <div class="main-content">
-        <div class="box">
-            <div class="threat-map-title">Threat Map</div>
-            <div id="globeViz"></div>
-            <div class="threat-map-legend">
-                <span class="red">Red:</span> Active attacks
-                <span class="orange">Orange:</span> Recent attempts
-                <span class="yellow">Yellow:</span> Suspicious activity
+        <div class="card">
+            <h2>Threat Map</h2>
+            <div id="map-container">
+                <div id="globeViz"></div>
+            </div>
+            <div class="legend">
+                <span class="red"><b>Red:</b> Active attacks</span>
+                <span class="orange"><b>Orange:</b> Recent attempts</span>
+                <span class="yellow"><b>Yellow:</b> Suspicious activity</span>
             </div>
         </div>
     </div>
+    <!-- Three.js & Globe.gl -->
+    <script src="https://unpkg.com/three@0.121.1/build/three.min.js"></script>
+    <script src="https://unpkg.com/globe.gl@2.30.7/dist/globe.gl.min.js"></script>
     <script>
-        // Example: countries to highlight by type
-        const threatCountries = [
-            { name: "Russia", color: "red", label: "Active attacks" },
-            { name: "China", color: "red", label: "Active attacks" },
-            { name: "Iran", color: "orange", label: "Recent attempts" },
-            { name: "Malaysia", color: "yellow", label: "Suspicious activity" },
-            { name: "North Korea", color: "red", label: "Active attacks" },
-            { name: "Brazil", color: "orange", label: "Recent attempts" }
+        // Example: mark Russia/China/Iran in red, Malaysia in orange, Ukraine in yellow, etc.
+        const highlightCountries = [
+            { code: 'CN', color: 'red', label: 'Active attacks' },
+            { code: 'RU', color: 'red', label: 'Active attacks' },
+            { code: 'IR', color: 'red', label: 'Active attacks' },
+            { code: 'KP', color: 'red', label: 'Active attacks' },
+            { code: 'UA', color: 'yellow', label: 'Suspicious activity' },
+            { code: 'MY', color: 'orange', label: 'Recent attempts' },
+            { code: 'US', color: 'orange', label: 'Recent attempts' }
         ];
 
-        fetch('https://unpkg.com/world-atlas@2.0.2/countries-110m.json').then(res => res.json()).then(countries => {
-            const countriesGeo = window.topojson.feature(countries, countries.objects.countries).features;
+        // fetch country polygons (GeoJSON)
+        fetch('https://unpkg.com/world-atlas@2.0.2/countries-110m.json').then(res => res.json())
+            .then(countries => {
+                const Globe = window.Globe;
+                const globe = Globe()
+                  (document.getElementById('globeViz'))
+                  .globeImageUrl('//unpkg.com/three-globe/example/img/earth-night.jpg')
+                  .backgroundColor('rgba(0,0,0,0)')
+                  .width(440)
+                  .height(440)
+                  .showGraticules(false)
+                  .polygonsData(
+                      window.topojson.feature(countries, countries.objects.countries).features
+                  )
+                  .polygonCapColor(feat => {
+                    const match = highlightCountries.find(c => c.code === feat.id || c.code === feat.properties.iso_a2);
+                    return match ? match.color : 'rgba(0,0,0,0.36)';
+                  })
+                  .polygonStrokeColor(() => '#1a3555')
+                  .polygonAltitude(feat => {
+                    const match = highlightCountries.find(c => c.code === feat.id || c.code === feat.properties.iso_a2);
+                    return match ? 0.06 : 0.007;
+                  })
+                  .polygonLabel(feat => {
+                    const match = highlightCountries.find(c => c.code === feat.id || c.code === feat.properties.iso_a2);
+                    return match
+                        ? `<b>${feat.properties.name}</b><br>${match.label}`
+                        : `<b>${feat.properties.name}</b>`;
+                  })
+                  .onPolygonHover((feat) => globe
+                    .polygonAltitude(feat2 =>
+                      feat2 === feat
+                        ? 0.11
+                        : highlightCountries.find(c => c.code === feat2.id || c.code === feat2.properties.iso_a2)
+                            ? 0.06
+                            : 0.007
+                    )
+                  );
 
-            // Assign color per country
-            countriesGeo.forEach(feat => {
-                const match = threatCountries.find(tc => feat.properties.name === tc.name);
-                feat.properties.color = match ? match.color : "#232c3b";
-                feat.properties.threatLabel = match ? match.label : "";
+                // zoom and orient globe
+                globe.pointOfView({ lat: 42, lng: 80, altitude: 2.15 });
             });
 
-            const globe = Globe()
-                (document.getElementById('globeViz'))
-                .globeImageUrl('//unpkg.com/three-globe/example/img/earth-dark.jpg')
-                .backgroundColor('rgba(0,0,0,0)')
-                .polygonsData(countriesGeo)
-                .polygonCapColor(feat => {
-                    if(feat.properties.color === "red") return "rgba(255,75,75,0.80)";
-                    if(feat.properties.color === "orange") return "rgba(255,152,0,0.75)";
-                    if(feat.properties.color === "yellow") return "rgba(255,214,0,0.70)";
-                    return "rgba(30,40,50,0.5)";
-                })
-                .polygonSideColor(() => 'rgba(30,40,50,0.09)')
-                .polygonStrokeColor(() => '#1a2230')
-                .onPolygonHover((feat) => {
-                    document.body.style.cursor = feat ? 'pointer' : '';
-                })
-                .polygonsTransitionDuration(350)
-                .polygonLabel(feat => `
-                    <div style="color: #ffd600; font-weight:bold; font-size:1.2em;">
-                        ${feat.properties.name}
-                    </div>
-                    <div style="color:#fff;font-size:1em;">
-                        ${feat.properties.threatLabel}
-                    </div>
-                `);
-
-            // Initial view
-            globe.pointOfView({ lat: 36, lng: 30, altitude: 2.1 });
-        });
-
-        // Load TopoJSON script for country shapes
-        (function(){
-            var s = document.createElement('script');
-            s.src = 'https://unpkg.com/topojson@3';
-            document.head.appendChild(s);
-        })();
+        // TopoJSON library required for country conversion
     </script>
+    <script src="https://unpkg.com/topojson@3"></script>
 </body>
 </html>
